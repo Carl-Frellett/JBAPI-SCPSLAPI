@@ -1,0 +1,3388 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RueI</name>
+    </assembly>
+    <members>
+        <member name="T:RueI.RueIMain">
+            <summary>
+            Represents the main class for RueI.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.RueIMain"/> class is responsible for properly initializing all of RueI.
+            </remarks>
+        </member>
+        <member name="F:RueI.RueIMain.HARMONYID">
+            <summary>
+            Gets the <see cref="T:HarmonyLib.Harmony"/> id for RueI.
+            </summary>
+        </member>
+        <member name="F:RueI.RueIMain.Version">
+            <summary>
+            Gets the current version of RueI.
+            </summary>
+        </member>
+        <member name="M:RueI.RueIMain.EnsureInit">
+            <summary>
+            Ensures that RueI is properly initialized.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.CharacterLengths">
+            <summary>
+            Provides lengths for characters in hints.
+            </summary>
+            <remarks>This class is mosty designed for internal use within RueI. However, it can still be useful for external use.</remarks>
+        </member>
+        <member name="P:RueI.Parsing.CharacterLengths.Lengths">
+            <summary>
+            Gets a <see cref="T:System.Collections.Generic.IReadOnlyDictionary`2"/> of character sizes.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Enums.CaseStyle">
+            <summary>
+            Represents the case style of the parser.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.CaseStyle.Smallcaps">
+            <summary>
+            Indicates that all text will be in uppercase, but lowercase characters will be slightly smaller.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.CaseStyle.Lowercase">
+            <summary>
+            Indicates that all text will be in lowercase.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.CaseStyle.Uppercase">
+            <summary>
+            Indicates that all text will be in uppercase.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Enums.ColorStyle">
+            <summary>
+            Represents the style used for a color parameter.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.ColorStyle.Named">
+            <summary>
+            Indicates that the color parameter is a named color.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.ColorStyle.HexCode">
+            <summary>
+            Indicates that the color parameter is a hex code.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Enums.MeasurementUnit">
+            <summary>
+            Represents the unit used for a measurement parameter.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.MeasurementUnit.Pixels">
+            <summary>
+            Indicates that the measurement is in pixels.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.MeasurementUnit.Percentage">
+            <summary>
+            Indicates that the measurement is a percentage of the default.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.MeasurementUnit.Ems">
+            <summary>
+            Indicates that the measurement is in ems.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Enums.ParserState">
+            <summary>
+            Represents the state of the parser.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.ParserState.CollectingTags">
+            <summary>
+            Indicates that the parser is currently looking for a tag to start parsing.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.ParserState.DescendingTag">
+            <summary>
+            Indicates that the parser is currently descending the tag tree for a tag.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.ParserState.CollectingParams">
+            <summary>
+            Indicates that the parser is currently collecting characters for a param.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Enums.TagStyle">
+            <summary>
+            Represents the valid characters for a delimiter.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.TagStyle.NoParams">
+            <summary>
+            Indicates that a tag does not take parameters.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.TagStyle.ValueParam">
+            <summary>
+            Indicates that a tag takes in a value (equal sign) param.
+            </summary>
+        </member>
+        <member name="F:RueI.Parsing.Enums.TagStyle.Attributes">
+            <summary>
+            Indicates that a tag takes in only attributes (space delimiter).
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Parser">
+            <summary>
+            Helps parse the content of elements. This class cannot be inherited.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.Parsing.Parser" /> is a sealed, immutable class that provides APIs for parsing (extracting the information of) hints so that
+            multiple can be displayed at once, along with the ability to add new <see cref="T:RueI.Parsing.RichTextTag" />s. In order to create new <see cref="T:RueI.Parsing.Parser" />s,
+            you must use the <see cref="T:RueI.Parsing.ParserBuilder" /> class.
+            </remarks>
+            <example>
+				This example demonstrates creating and using a <see cref="T:RueI.Parsing.ParserBuilder" />.
+				<code>
+					Parser builder = new ParserBuilder()
+						.ImportFrom(Constants.DefaultParser)
+						.AddTag&lt;MyCustomTag&gt;(); <!-- .AddTag<MyCustomTag>(); -->
+						.Build();
+					
+					builder.Parse("hello world!")
+				</code>
+			</example>
+            <seealso cref="T:RueI.Parsing.ParserBuilder" />
+        </member>
+        <member name="M:RueI.Parsing.Parser.#ctor(System.Collections.Generic.IEnumerable{RueI.Parsing.RichTextTag},System.Collections.Generic.IEnumerable{RueI.Parsing.Parser})">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Parsing.Parser"/> class.
+            </summary>
+            <param name="tags">The list of tags to initialize with.</param>
+            <param name="backups">The list of parsers to use as a backup.</param>
+        </member>
+        <member name="P:RueI.Parsing.Parser.DefaultParser">
+            <summary>
+            Gets the default <see cref="T:RueI.Parsing.Parser"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Parser.Tags">
+            <summary>
+            Gets the tags that will be searched for when parsing.
+            </summary>
+            <remarks>
+            Multiple tags can share the same name.
+            </remarks>
+        </member>
+        <member name="P:RueI.Parsing.Parser.TagBackups">
+            <summary>
+            Gets a list of <see cref="T:RueI.Parsing.Parser"/>s which this <see cref="T:RueI.Parsing.Parser"/> will include the tags for.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.Parser.AddCharacter(RueI.Parsing.ParserContext,System.Char,System.Boolean)">
+            <summary>
+            Adds a character to a parser context.
+            </summary>
+            <param name="context">The context of the parser.</param>
+            <param name="ch">The character to add.</param>
+            <param name="append">Whether or not the character should be appended to the <see cref="T:RueI.Parsing.ParserContext"/>'s <see cref="P:RueI.Parsing.ParserContext.ResultBuilder"/>.</param>
+        </member>
+        <member name="M:RueI.Parsing.Parser.CalculateCharacterLength(RueI.Parsing.TextInfo,System.Char)">
+            <summary>
+            Calculates the length of a <see cref="T:System.Char"/> with a context.
+            </summary>
+            <param name="context">The context to parse the char under.</param>
+            <param name="ch">The char to calculate the length for.</param>
+            <returns>A float indicating the total length of the char.</returns>
+        </member>
+        <member name="M:RueI.Parsing.Parser.CreateLineBreak(RueI.Parsing.ParserContext,System.Boolean)">
+            <summary>
+            Generates the effects of a linebreak for a parser.
+            </summary>
+            <param name="context">The context of the parser.</param>
+            <param name="isOverflow">Whether or not the line break was caused by an overflow.</param>
+        </member>
+        <member name="M:RueI.Parsing.Parser.GetTagAttributes(System.String,System.Collections.Generic.Dictionary{System.String,System.String}@)">
+            <summary>
+            Attempts to parse the tag attributes of a string.
+            </summary>
+            <param name="content">The content to parse.</param>
+            <param name="attributes">The pairs of attributes.</param>
+            <returns>true if the content is valid, otherwise false.</returns>,
+        </member>
+        <member name="M:RueI.Parsing.Parser.Parse(System.String,RueI.Elements.Enums.ElementOptions)">
+            <summary>
+            Parses a rich text string.
+            </summary>
+            <param name="text">The string to parse.</param>
+            <param name="options">The options of the element.</param>
+            <returns>A <see cref="T:RueI.Parsing.Records.ParsedData"/> containing information about the string.</returns>
+        </member>
+        <member name="M:RueI.Parsing.Parser.CalculateSizeOffset(System.Single)">
+            <summary>
+            Calculates the size offset that should applied to the parser for a given line.
+            </summary>
+            <param name="biggestChar">The size of the biggest char within the line.</param>
+            <returns>An offset that should be added to the parser.</returns>
+        </member>
+        <member name="M:RueI.Parsing.Parser.AvoidMatch(RueI.Parsing.ParserContext)">
+            <summary>
+            Avoids the client TMP matching a tag.
+            </summary>
+            <param name="context">The context of the parser.</param>
+        </member>
+        <member name="M:RueI.Parsing.Parser.TryGetBestMatch(System.String,RueI.Parsing.Enums.TagStyle,RueI.Parsing.RichTextTag@)">
+            <summary>
+            Tries to get a <see cref="T:RueI.Parsing.RichTextTag"/> for the given name and <see cref="T:RueI.Parsing.Enums.TagStyle"/>.
+            </summary>
+            <param name="name">The name of the tag.</param>
+            <param name="style">The style of the tag.</param>
+            <param name="tag">The returned tag, if it exists.</param>
+            <returns>A value indicating whether or not a tag was found.</returns>
+        </member>
+        <member name="T:RueI.Parsing.ParserBuilder">
+            <summary>
+            Builds <see cref="T:RueI.Parsing.Parser"/>s.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.ParserBuilder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Parsing.ParserBuilder"/> class.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserBuilder.TagsCount">
+            <summary>
+            Gets the number of tags within this <see cref="T:RueI.Parsing.ParserBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.ParserBuilder.AddFromAssembly(System.Reflection.Assembly)">
+            <summary>
+            Adds new <see cref="T:RueI.Parsing.RichTextTag"/>s from an assembly by getting all of the <see cref="T:RueI.Parsing.Tags.RichTextTagAttribute"/> classes.
+            </summary>
+            <param name="assembly">The <see cref="T:System.Reflection.Assembly"/> to get the classes from.</param>
+            <returns>A reference to this <see cref="T:RueI.Parsing.ParserBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Parsing.ParserBuilder.AddTag``1">
+            <summary>
+            Gets the <see cref="T:RueI.Parsing.Tags.SharedTag`1"/> of a <see cref="T:RueI.Parsing.RichTextTag"/> type and adds it to the builder.
+            </summary>
+            <typeparam name="T">The type of the tag to create.</typeparam>
+            <returns>A reference to this <see cref="T:RueI.Parsing.ParserBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Parsing.ParserBuilder.ImportFrom(RueI.Parsing.Parser)">
+            <summary>
+            Imports all of the <see cref="T:RueI.Parsing.RichTextTag"/>s from a <see cref="T:RueI.Parsing.Parser"/>, adding it to the builder.
+            </summary>
+            <param name="parser">The <see cref="T:RueI.Parsing.Parser"/> to import the tags from.</param>
+            <returns>A reference to this <see cref="T:RueI.Parsing.ParserBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Parsing.ParserBuilder.Build">
+            <summary>
+            Builds this <see cref="T:RueI.Parsing.ParserBuilder"/> into a <see cref="T:RueI.Parsing.Parser"/>.
+            </summary>
+            <returns>The built <see cref="T:RueI.Parsing.Parser"/>.</returns>
+        </member>
+        <member name="M:RueI.Parsing.ParserBuilder.AddTags(System.Collections.Generic.IEnumerable{RueI.Parsing.RichTextTag})">
+            <summary>
+            Adds all of the tags from an <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <param name="tags">The tags to add.</param>
+        </member>
+        <member name="T:RueI.Parsing.ParserContext">
+            <summary>
+            Describes the state of a parser at a time.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.Parsing.ParserContext"/> class provides a way for the general state of the parser,
+            such as the current line width or the vertical height, to be modified by passing it along.
+            Tags should modify this in order to change the end result of parsing.
+            </remarks>
+        </member>
+        <member name="F:RueI.Parsing.ParserContext.endingTags">
+            <summary>
+            Gets a list of tags that the parser should add at the end.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.ResultBuilder">
+            <summary>
+            Gets the end result string builder.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.NewOffset">
+            <summary>
+            Gets or sets the final offset for the element as a whole.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.DisplayAreaWidth">
+            <summary>
+            Gets or sets the current width of the text.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.FunctionalWidth">
+            <summary>
+            Gets the current functional width of the text.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.SizeTags">
+            <summary>
+            Gets a stack containing all of the nested sizes.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.CurrentLineWidth">
+            <summary>
+            Gets or sets the current line width of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.SpaceBuffer">
+            <summary>
+            Gets or sets the current space buffer of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.NewlineBuffer">
+            <summary>
+            Gets or sets the newline buffer of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.Indent">
+            <summary>
+            Gets or sets the current indent of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.VOffset">
+            <summary>
+            Gets or sets the current voffset of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.LineIndent">
+            <summary>
+            Gets or sets the current line indent of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.ShouldParse">
+            <summary>
+            Gets or sets a value indicating whether the parser should parse tags other than <see cref="T:RueI.Parsing.Tags.ConcreteTags.CloseNoparseTag"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.WidthSinceSpace">
+            <summary>
+            Gets or sets the total width since a space.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.NoBreak">
+            <summary>
+            Gets or sets a value indicating whether or not words are currently in no break.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.ColorTags">
+            <summary>
+            Gets or sets the number of color tags that are nested.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.BiggestCharSize">
+            <summary>
+            Gets or sets the biggest char size of the line.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.SkipOverflow">
+            <summary>
+            Gets or sets a value indicating whether or not overflow checks will be skipped.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.RightMargin">
+            <summary>
+            Gets or sets the right margin of the line.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.LeftMargin">
+            <summary>
+            Gets or sets the left margin of the line.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ParserContext.LineHasAnyChars">
+            <summary>
+            Gets or sets a value indicating whether or not the current line has any characters.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.ParserContext.AddEndingTag``1(System.Boolean)">
+            <summary>
+            Adds a <see cref="T:RueI.Parsing.RichTextTag"/> to a list of tags that will be added to the end of the parser's result.
+            </summary>
+            <typeparam name="T">The type of the <see cref="T:RueI.Parsing.RichTextTag"/> to be added as an ending tag (as a <see cref="T:RueI.Parsing.Tags.SharedTag`1"/>).</typeparam>
+            <param name="allowDuplicates">Whether or not duplicates are allowed, accommodating for nested tags.</param>
+        </member>
+        <member name="M:RueI.Parsing.ParserContext.RemoveEndingTag``1">
+            <summary>
+            Removes a <see cref="T:RueI.Parsing.RichTextTag"/> from the list list of tags that will be added to the end of the parser's result.
+            </summary>
+            <typeparam name="T">The type of the <see cref="T:RueI.Parsing.RichTextTag"/> to be removed from the ending tags (as a <see cref="T:RueI.Parsing.Tags.SharedTag`1"/>).</typeparam>
+        </member>
+        <member name="M:RueI.Parsing.ParserContext.ApplyClosingTags">
+            <summary>
+            Applies the <see cref="F:RueI.Parsing.ParserContext.endingTags"/> and closing <see cref="P:RueI.Parsing.ParserContext.SizeTags"/> tags to this <see cref="T:RueI.Parsing.ParserContext"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.ParserContext.Dispose">
+            <summary>
+            Disposes this ParserContext, returning the string builder to the pool.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Records.MeasurementInfo">
+            <summary>
+            Defines a record that contains information about measurement info.
+            </summary>
+            <param name="value">The value of the measurement.</param>
+            <param name="style">The style of the measurement.</param>
+            <remarks>
+            This provides a convenient way to specify both the value and unit for a measurement,
+            as the base value when converted to pixels can differ depending on the
+            context of the measurement.
+            </remarks>
+        </member>
+        <member name="M:RueI.Parsing.Records.MeasurementInfo.#ctor(System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Defines a record that contains information about measurement info.
+            </summary>
+            <param name="value">The value of the measurement.</param>
+            <param name="style">The style of the measurement.</param>
+            <remarks>
+            This provides a convenient way to specify both the value and unit for a measurement,
+            as the base value when converted to pixels can differ depending on the
+            context of the measurement.
+            </remarks>
+        </member>
+        <member name="P:RueI.Parsing.Records.MeasurementInfo.value">
+            <summary>The value of the measurement.</summary>
+        </member>
+        <member name="P:RueI.Parsing.Records.MeasurementInfo.style">
+            <summary>The style of the measurement.</summary>
+        </member>
+        <member name="M:RueI.Parsing.Records.MeasurementInfo.TryParse(System.String,RueI.Parsing.Records.MeasurementInfo@)">
+            <summary>
+            Attempts to extract a <see cref="T:RueI.Parsing.Records.MeasurementInfo"/> from a string.
+            </summary>
+            <param name="content">The content to parse.</param>
+            <param name="info">The returned info, if true.</param>
+            <returns>true if the string was valid, otherwise false.</returns>
+        </member>
+        <member name="M:RueI.Parsing.Records.MeasurementInfo.ToString">
+            <summary>
+            Gets a string representation of this <see cref="T:RueI.Parsing.Records.MeasurementInfo"/>.
+            </summary>
+            <returns>A new value.</returns>
+        </member>
+        <member name="T:RueI.Parsing.Records.ParsedData">
+            <summary>
+            Defines a class that contains parsed information about a single element, used for displaying multiple at a time.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.Records.ParsedData.#ctor(System.String,System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Parsing.Records.ParsedData"/> class.
+            </summary>
+            <param name="content">The element's content.</param>
+            <param name="offset">The offset that should be applied. Equivalent to the total linebreaks within the element.</param>
+        </member>
+        <member name="P:RueI.Parsing.Records.ParsedData.Content">
+            <summary>
+            Gets the content of the element.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Records.ParsedData.Offset">
+            <summary>
+            Gets the offset that should be applied to the element.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.Records.ParsedData.Deconstruct(System.String@,System.Single@)">
+            <summary>
+            Deconstructs this <see cref="T:RueI.Parsing.Records.ParsedData"/>.
+            </summary>
+            <param name="content">The returned new content of the element.</param>
+            <param name="offset">The returned offset of the element.</param>
+        </member>
+        <member name="T:RueI.Parsing.ClosingTag`1">
+            <summary>
+            Defines the base class for all rich text tags.
+            </summary>
+            <typeparam name="T">The type of the closing tag.</typeparam>
+        </member>
+        <member name="P:RueI.Parsing.ClosingTag`1.Name">
+            <summary>
+            Gets the only name of this <see cref="T:RueI.Parsing.ClosingTag`1"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.ClosingTag`1.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.ClosingTag`1.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.ClosingTag`1.ApplyTo(RueI.Parsing.ParserContext)">
+            <summary>
+            Applies the effects <see cref="T:RueI.Parsing.ClosingTag`1"/> to a <see cref="T:RueI.Parsing.ParserContext"/>.
+            </summary>
+            <param name="context">The context of the parser.</param>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.AlignTag">
+            <summary>
+            Provides a way to handle align tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.AlignTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.AlignTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.AlignTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.AlphaTag">
+            <summary>
+            Provides a way to handle alpha tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.AlphaTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.AlphaTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.AlphaTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.BoldTag">
+            <summary>
+            Provides a way to handle bold tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.BoldTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.BoldTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.BrTag">
+            <summary>
+            Provides a way to handle br tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.BrTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.BrTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.SmallcapsTag">
+            <summary>
+            Provides a way to handle smallcaps tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.SmallcapsTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.SmallcapsTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseSmallcapsTag">
+            <summary>
+            Provides a way to handle closing smallcaps tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseSmallcapsTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseSmallcapsTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.AllcapsTag">
+            <summary>
+            Provides a way to handle allcaps tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.AllcapsTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.AllcapsTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseAllcapsTag">
+            <summary>
+            Provides a way to handle closing allcaps tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseAllcapsTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseAllcapsTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.LowercaseTag">
+            <summary>
+            Provides a way to handle lowercase tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.LowercaseTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.LowercaseTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseLowercase">
+            <summary>
+            Provides a way to handle closing lowercase tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseLowercase.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseLowercase.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseAlignTag">
+            <summary>
+            Provides a way to handle closing align tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseAlignTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseAlphaTag">
+            <summary>
+            Provides a way to handle closing alpha tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseAlphaTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseAlphaTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseBoldTag">
+            <summary>
+            Provides a way to handle closing bold tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseBoldTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseBoldTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseColorTag">
+            <summary>
+            Provides a way to handle closing color tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseColorTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseCSpaceTag">
+            <summary>
+            Provides a way to handle closing cspace tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseCSpaceTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseCSpaceTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseIndentTag">
+            <summary>
+            Provides a way to handle closing indent tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseIndentTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseIndentTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseItalicsTag">
+            <summary>
+            Provides a way to handle closing italics tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseItalicsTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseLineHeightTag">
+            <summary>
+            Provides a way to handle closing line height tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseLineHeightTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseLineHeightTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseLineIndentTag">
+            <summary>
+            Provides a way to handle closing line indent tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseLineIndentTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseLineIndentTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseMarkTag">
+            <summary>
+            Provides a way to handle closing mark tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseMarkTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseNobrTag">
+            <summary>
+            Provides a way to handle closing nobr tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseNobrTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseNobrTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseNoparseTag">
+            <summary>
+            Provides a way to handle closing noparse tags.
+            </summary>
+            <remarks>
+            The RueI <see cref="T:RueI.Parsing.Parser"/> allows this tag to be matched even when <see cref="P:RueI.Parsing.ParserContext.ShouldParse"/> is <c>false</c>.
+            This replicates the behavior of normal TextMesh Pro.
+            </remarks>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseNoparseTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseNoparseTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseRotateTag">
+            <summary>
+            Provides a way to handle closing rotate tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseRotateTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseScaleTag">
+            <summary>
+            Provides a way to handle closing scale tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseScaleTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseScaleTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseSizeTag">
+            <summary>
+            Provides a way to handle closing size tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseSizeTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseSizeTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseStrikethroughTag">
+            <summary>
+            Provides a way to handle closing strikethrough tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseStrikethroughTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseSubscriptTag">
+            <summary>
+            Provides a way to handle closing subscript tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseSubscriptTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseSubscriptTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseSuperscriptTag">
+            <summary>
+            Provides a way to handle closing superscript tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseSuperscriptTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseSuperscriptTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseUnderlineTag">
+            <summary>
+            Provides a way to handle closing underline tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseUnderlineTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseVOffsetTag">
+            <summary>
+            Provides a way to handle closing voffset tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseVOffsetTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.ColorTag">
+            <summary>
+            Provides a way to handle color tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ColorTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ColorTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.ColorTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CSpaceTag">
+            <summary>
+            Provides a way to handle cspace tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CSpaceTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CSpaceTag.AllowPercentages">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CSpaceTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.IndentTag">
+            <summary>
+            Provides a way to handle indent tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.IndentTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.IndentTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.ItalicsAngleTag">
+            <summary>
+            Provides a way to handle italic angles tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ItalicsAngleTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ItalicsAngleTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.ItalicsAngleTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.ItalicsTag">
+            <summary>
+            Provides a way to handle italics tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ItalicsTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.ItalicsTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.LineHeightTag">
+            <summary>
+            Provides a way to handle line-height tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.LineHeightTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.LineHeightTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.LineIndentTag">
+            <summary>
+            Provides a way to handle line indent tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.LineIndentTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.LineIndentTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.MarginTag">
+            <summary>
+            Provides a way to handle margin tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.MarginTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.MarginTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.MarginLeft">
+            <summary>
+            Provides a way to handle margin tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.MarginLeft.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.MarginLeft.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.MarginRight">
+            <summary>
+            Provides a way to handle margin tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.MarginRight.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.MarginRight.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.CloseMarginTag">
+            <summary>
+            Provides a way to handle closing indent tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.CloseMarginTag.Name">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.CloseMarginTag.ApplyTo(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.MarkTag">
+            <summary>
+            Provides a way to handle mark tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.MarkTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.MarkTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.MarkTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.NobrTag">
+            <summary>
+            Provides a way to handle nobr tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.NobrTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.NobrTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.NoparseTag">
+            <summary>
+            Provides a way to handle noparse tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.NoparseTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.NoparseTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.PageTag">
+            <summary>
+            Provides a way to handle page tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.PageTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.PageTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.PosTag">
+            <summary>
+            Provides a way to handle pos tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.PosTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.PosTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.RotateTag">
+            <summary>
+            Provides a way to handle rotate tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.RotateTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.RotateTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.ScaleTag">
+            <summary>
+            Provides a way to handle scale tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ScaleTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.ScaleTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.ScaleTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.SizeTag">
+            <summary>
+            Provides a way to handle size tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.SizeTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.SizeTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.SpaceTag">
+            <summary>
+            Provides a way to handle space tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.SpaceTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.SpaceTag.AllowPercentages">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.SpaceTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.StrikethroughTag">
+            <summary>
+            Provides a way to handle strikethrough tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.StrikethroughTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.StrikethroughTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.SubscriptTag">
+            <summary>
+            Provides a way to handle subscript tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.SubscriptTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.SubscriptTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.SuperscriptTag">
+            <summary>
+            Provides a way to handle superscript tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.SuperscriptTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.SuperscriptTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.UnderlineTag">
+            <summary>
+            Provides a way to handle underline tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.UnderlineTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.UnderlineTag.HandleTag(RueI.Parsing.ParserContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.ConcreteTags.VOffsetTag">
+            <summary>
+            Provides a way to handle voffset tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.VOffsetTag.AllowPercentages">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.ConcreteTags.VOffsetTag.Names">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.ConcreteTags.VOffsetTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Parsing.Tags.MeasurementTag">
+            <summary>
+            Defines a <see cref="T:RueI.Parsing.RichTextTag"/> that only takes in a measurement.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.Tags.MeasurementTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="P:RueI.Parsing.Tags.MeasurementTag.AllowPercentages">
+            <summary>
+            Gets a value indicating whether or not this tag allows parentheses.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.Tags.MeasurementTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.Tags.MeasurementTag.HandleTag(RueI.Parsing.ParserContext,RueI.Parsing.Records.MeasurementInfo)">
+            <summary>
+            Handles an instance of this tag with <see cref="T:RueI.Parsing.Records.MeasurementInfo"/>.
+            </summary>
+            <param name="context">The context of the parser.</param>
+            <param name="info">The information about the measurement.</param>
+            <returns>true if the tag is valid, otherwise false.</returns>
+        </member>
+        <member name="T:RueI.Parsing.Tags.RichTextTagAttribute">
+            <summary>
+            Defines a <see cref="T:RueI.Parsing.RichTextTag"/> for RueI.
+            </summary>
+            <remarks>
+            You can apply this <see cref="T:System.Attribute"/> to classes that inherit from <see cref="T:RueI.Parsing.RichTextTag"/> to define a custom <see cref="T:RueI.Parsing.RichTextTag"/> easily.
+            This attribute is used exclusive by the <see cref="M:RueI.Parsing.ParserBuilder.AddFromAssembly(System.Reflection.Assembly)"/> method.
+            </remarks>
+        </member>
+        <member name="T:RueI.Parsing.Tags.SharedTag`1">
+            <summary>
+            Provides a way to handle singletons of tags.
+            </summary>
+            <typeparam name="T">The <see cref="T:RueI.Parsing.RichTextTag"/> type to share.</typeparam>
+            <remarks>
+            This class provides a way to guarantee that only one instance of a tag will ever be used by the parser,
+            since tags are not static to support inheritance but must act similar to it.
+            </remarks>
+        </member>
+        <member name="P:RueI.Parsing.Tags.SharedTag`1.Singleton">
+            <summary>
+            Gets the shared singleton for this <see cref="T:RueI.Parsing.RichTextTag"/>.
+            </summary>
+        </member>
+        <member name="T:RueI.Parsing.Tags.TagHelpers">
+            <summary>
+            Provides a number of helper functions for <see cref="T:RueI.Parsing.RichTextTag"/>s.
+            </summary>
+        </member>
+        <member name="M:RueI.Parsing.Tags.TagHelpers.ExtractFromQuotations(System.String)">
+            <summary>
+            Validates and extracts the text from inside quotations for tag parameters, or returns the original string.
+            </summary>
+            <param name="str">The <see cref="T:System.String"/> to extract the quotations from.</param>
+            <returns>The string with the quotes removed, or null if the string is invalid.</returns>
+            <example>
+            This code demonstrates the behavior of <see cref="M:RueI.Parsing.Tags.TagHelpers.ExtractFromQuotations(System.String)"/>.
+            <code>
+            ExtractFromQuotations("\"hello world\"") // -> hello world
+            ExtractFromQuotations("hello world") // -> hello world
+            ExtractFromQuotations("\"hello world") // -> null
+            ExtractFromQuotations("hello world\"") // -> null
+            </code>
+            </example>
+        </member>
+        <member name="T:RueI.Parsing.NoParamsTag">
+            <summary>
+            Defines a <see cref="T:RueI.Parsing.RichTextTag"/> that does not take in parameters.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.NoParamsTag.TagStyle">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.NoParamsTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.Parsing.NoParamsTag.HandleTag(RueI.Parsing.ParserContext)">
+            <summary>
+            Applies this tag (without parameters) to a <see cref="T:RueI.Parsing.ParserContext"/>.
+            </summary>
+            <param name="context">The context of the parser.</param>
+            <returns>true if the tag is valid, otherwise false.</returns>
+        </member>
+        <member name="T:RueI.Parsing.RichTextTag">
+            <summary>
+            Defines the base class for all rich text tags.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.RichTextTag.Names">
+            <summary>
+            Gets the names of this tag.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.RichTextTag.TagStyle">
+            <summary>
+            Gets the parameter style of this tag.
+            </summary>
+            <remarks>
+            This property is used to determine what delimiters between the tag name and parameters (e.g. space, equal sign, none) will be allowed. For multiple tag style, create different classes.
+            </remarks>
+        </member>
+        <member name="M:RueI.Parsing.RichTextTag.HandleTag(RueI.Parsing.ParserContext,System.String)">
+            <summary>
+            Applies this tag to a <see cref="T:RueI.Parsing.ParserContext"/>.
+            </summary>
+            <param name="context">The context of the parser.</param>
+            <param name="parameters">The parameters of the tag, excluding the delimiter.</param>
+            <returns>true if the tag is valid, otherwise false.</returns>
+            <remarks>If the tag does not have parameters, <paramref name="parameters"/> will always be <see cref="F:System.String.Empty"/>.</remarks>
+        </member>
+        <member name="T:RueI.Parsing.TextInfo">
+            <summary>
+            Provides information about TMP text at a certain point.
+            </summary>
+            <remarks>
+            This class provides information necessary for individual character sizes, but does not provide the required
+            information to calculate vertical offsets and total line widths. For that, use the derived class <see cref="T:RueI.Parsing.ParserContext"/>.
+            </remarks>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.CurrentLineHeight">
+            <summary>
+            Gets or sets the current line height of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.Size">
+            <summary>
+            Gets or sets the current character of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.CurrentCSpace">
+            <summary>
+            Gets or sets the current additional character spacing of the text.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.IsMonospace">
+            <summary>
+            Gets or sets a value indicating whether the characters are currently in monospace.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.Monospacing">
+            <summary>
+            Gets or sets the monospacing of the text.
+            </summary>
+            <remarks>
+            If <see cref="P:RueI.Parsing.TextInfo.IsMonospace"/> is false, this value will be ignored.
+            </remarks>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.IsBold">
+            <summary>
+            Gets or sets a value indicating whether or not the characters are currently bold.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.Scale">
+            <summary>
+            Gets or sets the scale of the parser.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.IsSubscript">
+            <summary>
+            Gets or sets a value indicating whether or not the parser is in subscript.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.IsSuperscript">
+            <summary>
+            Gets or sets a value indicating whether or not the parser is in superscript.
+            </summary>
+        </member>
+        <member name="P:RueI.Parsing.TextInfo.CurrentCase">
+            <summary>
+            Gets or sets the current case of the parser.
+            </summary>
+        </member>
+        <member name="T:RueI.Constants">
+            <summary>
+            Provides a variety of constant values.
+            </summary>
+            <remarks>
+            This class is mosty designed for internal use within RueI. However, it can still be useful for external use.
+            </remarks>
+        </member>
+        <member name="F:RueI.Constants.DEFAULTHEIGHT">
+            <summary>
+            Gets the default height if a line-height is not provided.
+            </summary>
+            <remarks>Approximate.</remarks>
+        </member>
+        <member name="F:RueI.Constants.DEFAULTSIZE">
+            <summary>
+            Gets the default size (in pixels) if a size is not provided.
+            </summary>
+            <remarks>Not approximate.</remarks>
+        </member>
+        <member name="F:RueI.Constants.CAPSTOSMALLCAPS">
+            <summary>
+            Gets the multiplier used to convert the size of a capital character to a smallcaps character.
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.BOLDINCREASE">
+            <summary>
+            Gets the pixel increase for bold characters.
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.DISPLAYAREAWIDTH">
+            <summary>
+            Gets the width of the display area (in pixels).
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.EMSTOPIXELS">
+            <summary>
+            Gets how many pixels are in an em.
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.ZeroWidthSpace">
+            <summary>
+            Gets the zero width space.
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.MAXTAGNAMESIZE">
+            <summary>
+            Gets the maximum name size allowed for a tag.
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.MEASUREMENTVALUELIMIT">
+            <summary>
+            Gets the limit on measurement values.
+            </summary>
+        </member>
+        <member name="F:RueI.Constants.HintRateLimit">
+            <summary>
+            Gets the ratelimit used for displaying hints.
+            </summary>
+        </member>
+        <member name="P:RueI.Constants.ValidColorSizes">
+            <summary>
+            Gets a list of allowed sizes of color param tags, ignoring the hashtag.
+            </summary>
+        </member>
+        <member name="P:RueI.Constants.Alignments">
+            <summary>
+            Gets a <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1"/> of valid alignments for <see cref="T:RueI.Parsing.Tags.ConcreteTags.AlignTag"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Constants.Colors">
+            <summary>
+            Gets a list of allowed colors for <see cref="T:RueI.Parsing.Tags.ConcreteTags.ColorTag"/>.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.AutoElement">
+            <summary>
+            Manages and automatically assigns <see cref="T:RueI.Elements.Element"/> instances to any <see cref="T:RueI.Displays.DisplayCore"/> meeting a criteria.
+            </summary>
+            <remarks>
+            An <see cref="T:RueI.Displays.AutoElement"/> puts an <see cref="T:RueI.Elements.Element"/> in a <see cref="T:RueI.Displays.DisplayCore"/> if they match a
+            <see cref="T:RueI.Displays.Roles"/>. You can use the <see cref="M:RueI.Displays.AutoElement.#ctor(RueI.Displays.Roles,RueI.Elements.Element)"/> constructor for an
+            <see cref="T:RueI.Displays.AutoElement"/> that assigns a single instance of an <see cref="T:RueI.Elements.Element"/>. On the other hand,
+            if you want to create an element for each player, you can use the <see cref="M:RueI.Displays.AutoElement.#ctor(RueI.Displays.Roles,System.Func{RueI.Displays.DisplayCore,RueI.Elements.Element})"/>
+            constructor.
+            </remarks>
+        </member>
+        <member name="T:RueI.Displays.AutoElement.PeriodicUpdate">
+            <summary>
+            Represents a periodic update for an <see cref="T:RueI.Displays.AutoElement"/>.
+            </summary>
+            <param name="time">How often the <see cref="T:RueI.Displays.AutoElement"/> should schedule an auto-update.</param>
+            <param name="priority">The priority of the scheduled job.</param>
+        </member>
+        <member name="M:RueI.Displays.AutoElement.PeriodicUpdate.#ctor(System.TimeSpan,System.Int32)">
+            <summary>
+            Represents a periodic update for an <see cref="T:RueI.Displays.AutoElement"/>.
+            </summary>
+            <param name="time">How often the <see cref="T:RueI.Displays.AutoElement"/> should schedule an auto-update.</param>
+            <param name="priority">The priority of the scheduled job.</param>
+        </member>
+        <member name="P:RueI.Displays.AutoElement.PeriodicUpdate.time">
+            <summary>How often the <see cref="T:RueI.Displays.AutoElement"/> should schedule an auto-update.</summary>
+        </member>
+        <member name="P:RueI.Displays.AutoElement.PeriodicUpdate.priority">
+            <summary>The priority of the scheduled job.</summary>
+        </member>
+        <member name="M:RueI.Displays.AutoElement.#ctor(RueI.Displays.Roles,System.Func{RueI.Displays.DisplayCore,RueI.Elements.Element})">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.AutoElement"/> class.
+            </summary>
+            <param name="roles">The <see cref="P:RueI.Displays.AutoElement.Roles"/> to use for the <see cref="T:RueI.Displays.AutoElement"/>.</param>
+            <param name="creator">A <see cref="T:System.Func`2"/> that creates the elements.</param>
+        </member>
+        <member name="M:RueI.Displays.AutoElement.#ctor(RueI.Displays.Roles,RueI.Elements.Element)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.AutoElement"/> class.
+            </summary>
+            <param name="roles">The <see cref="P:RueI.Displays.AutoElement.Roles"/> to use for the <see cref="T:RueI.Displays.AutoElement"/>.</param>
+            <param name="element">The element to automatically give.</param>
+        </member>
+        <member name="P:RueI.Displays.AutoElement.Roles">
+            <summary>
+            Gets or sets the roles that this <see cref="T:RueI.Displays.AutoElement"/> will give this element on.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.AutoElement.UpdateEvery">
+            <summary>
+            Gets or sets a <see cref="T:RueI.Displays.AutoElement.PeriodicUpdate"/> indicating how often this <see cref="T:RueI.Displays.AutoElement"/> should
+            schedule an update for players with the element, or <c>null</c> if it should not auto-update.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.AutoElement.Disable">
+            <summary>
+            Disables this <see cref="T:RueI.Displays.AutoElement"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.AutoElement.GiveTo(RueI.Displays.DisplayCore)">
+            <summary>
+            Gives this <see cref="T:RueI.Displays.AutoElement"/> to a <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to give to.</param>
+        </member>
+        <member name="M:RueI.Displays.AutoElement.RemoveFrom(RueI.Displays.DisplayCore)">
+            <summary>
+            Removes this <see cref="T:RueI.Displays.AutoElement"/> from a <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to give to.</param>
+        </member>
+        <member name="T:RueI.Displays.Roles">
+            <summary>
+            Provides a means for describing multiple <see cref="T:PlayerRoles.RoleTypeId" />s.
+            </summary>
+            <remarks>
+            The purpose of the <see cref="T:RueI.Displays.Roles" /> enum is to enable roles to be treated like a <see cref="T:System.FlagsAttribute" /> enum. Normally,
+            <see cref="T:PlayerRoles.RoleTypeId" /> cannot be treated like bit flags, so this acts as a fast and convenient way to do so.
+            </remarks>
+            <example>
+					This example shows how <see cref="T:RueI.Displays.Roles" /> can be used to perform bitfield operations with <see cref="T:PlayerRoles.RoleTypeId" />s.
+					<code>
+						// the | (pipe) is the bitwise OR operator
+						// it combines the bits of all of the provided fields
+						// 1010 | 1100 -&gt; 1110
+						Roles roles = Roles.CivilianRoles | Roles.FacilityGuard | Roles.ScpsNo0492; // all things that can spawn in at the start of the game
+
+						// using RueI.Extensions.HasFlagFast because it is much quicker
+						roles.HasFlagFast(Roles.ChaosRifleman); // -&gt; false
+						roles.HasFlagFast(Roles.Scientist); // -&gt; true
+					</code>
+				</example>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp173">
+            <summary>
+            Gets the SCP-173 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ClassD">
+            <summary>
+            Gets the Class-D role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Spectator">
+            <summary>
+            Gets the Specatator role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp106">
+            <summary>
+            Gets the SCP-106 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.NtfSpecialist">
+            <summary>
+            Gets the NTF Specialist role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp049">
+            <summary>
+            Gets the SCP-049 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scientist">
+            <summary>
+            Gets the Scientist role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp079">
+            <summary>
+            Gets the SCP-079 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ChaosConscript">
+            <summary>
+            Gets the Chaos Conscript role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp096">
+            <summary>
+            Gets the SCP-096 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp0492">
+            <summary>
+            Gets the SCP-049-2 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.NtfSergeant">
+            <summary>
+            Gets the NTF Sergeant role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.NtfCaptain">
+            <summary>
+            Gets the NTF Captain role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.NtfPrivate">
+            <summary>
+            Gets the NTF Private role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Tutorial">
+            <summary>
+            Gets the Tutorial role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.FacilityGuard">
+            <summary>
+            Gets the Facility Guard role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp939">
+            <summary>
+            Gets the SCP-939 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.CustomRole">
+            <summary>
+            Gets the custom role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ChaosRifleman">
+            <summary>
+            Gets the Chaos Rifleman role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ChaosMarauder">
+            <summary>
+            Gets the Chaos Marauder role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ChaosRepressor">
+            <summary>
+            Gets the Chaos Repressor role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Overwatch">
+            <summary>
+            Gets the Overwatch role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Filmmaker">
+            <summary>
+            Gets the Filmmaker role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scp3114">
+            <summary>
+            Gets the SCP-3114 role id.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.NtfRoles">
+            <summary>
+            Gets all of the NTF role ids, including Facility Guards.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ChaosRoles">
+            <summary>
+            Gets all of the Chaos role ids.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.MilitaryRoles">
+            <summary>
+            Gets all of the military role ids.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.CivilianRoles">
+            <summary>
+            Gets all of the civilian role ids.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.HumanRoles">
+            <summary>
+            Gets all of the human role ids.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.ScpsNo0492">
+            <summary>
+            Gets all of the SCP role ids, excluding SCP-049-2.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Scps">
+            <summary>
+            Gets all of the SCP role ids, including SCP-049-2.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Alive">
+            <summary>
+            Gets all of the role ids for roles considered to be alive.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.Dead">
+            <summary>
+            Gets all of the role ids for roles considered to be dead.
+            </summary>
+        </member>
+        <member name="F:RueI.Displays.Roles.All">
+            <summary>
+            Gets all role ids.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Display">
+            <summary>
+            Represents a basic display attached to a <see cref="T:RueI.Displays.DisplayCore" />.
+            </summary>
+            <example>
+					This example demonstrates creating and using a <see cref="T:RueI.Displays.Display" />.
+					<code>
+						Display display = new(referenceHub); // Create a new display from a ReferenceHub
+
+						SetElement helloElem = new(300, zIndex: 10, "hello").AddTo(display);	
+						SetElement worldElem = new(250, zIndex: 10, "world").AddTo(display);
+
+						display.Update(); // Update the display
+					</code>
+				</example>
+        </member>
+        <member name="M:RueI.Displays.Display.#ctor(ReferenceHub)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Display"/> class.
+            </summary>
+            <param name="hub">The <see cref="T:ReferenceHub"/> to assign the display to.</param>
+        </member>
+        <member name="M:RueI.Displays.Display.#ctor(RueI.Displays.DisplayCore)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Display"/> class.
+            </summary>
+            <param name="coordinator">The <see cref="T:RueI.Displays.DisplayCore"/> to assign the display to.</param>
+        </member>
+        <member name="P:RueI.Displays.Display.Elements">
+            <summary>
+            Gets the elements of this display.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Display.GetAllElements">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Displays.DisplayBase">
+            <summary>
+            Defines the base class for all displays.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.DisplayBase.#ctor(ReferenceHub)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.DisplayBase"/> class.
+            </summary>
+            <param name="hub">The <see cref="T:ReferenceHub"/> to assign the display to.</param>
+        </member>
+        <member name="M:RueI.Displays.DisplayBase.#ctor(RueI.Displays.DisplayCore)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.DisplayBase"/> class.
+            </summary>
+            <param name="coordinator">The <see cref="T:RueI.Displays.DisplayCore"/> to assign the display to.</param>
+        </member>
+        <member name="P:RueI.Displays.DisplayBase.IsActive">
+            <summary>
+            Gets a value indicating whether or not this display is active.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.DisplayBase.ReferenceHub">
+            <summary>
+            Gets the <see cref="T:ReferenceHub"/> that this display is assigned to.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.DisplayBase.Coordinator">
+            <summary>
+            Gets the <see cref="T:RueI.Displays.DisplayCore"/> that this display is attached to.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.DisplayBase.GetAllElements">
+            <summary>
+            Gets all of the elements of this display.
+            </summary>
+            <returns>The <see cref="T:System.Collections.Generic.IEnumerator`1"/> of elements.</returns>
+        </member>
+        <member name="M:RueI.Displays.DisplayBase.Update">
+            <summary>
+            Updates the parent <see cref="T:RueI.Displays.DisplayCore"/> of this <see cref="T:RueI.Displays.DisplayBase"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.DisplayBase.Delete">
+            <summary>
+            Deletes this display, removing it from the player's core.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.DisplayCore">
+            <summary>
+            Manages all of the <see cref="T:RueI.Displays.DisplayBase"/>s for a <see cref="T:ReferenceHub"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.#ctor(ReferenceHub)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.DisplayCore"/> class.
+            </summary>
+            <param name="hub">The hub to create the display for.</param>
+        </member>
+        <member name="P:RueI.Displays.DisplayCore.Scheduler">
+            <summary>
+            Gets the <see cref="T:RueI.Displays.Scheduling.Scheduler"/> for this <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.DisplayCore.Hub">
+            <summary>
+            Gets the <see cref="T:ReferenceHub"/> that this display is for.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.DisplayCore.DisplayCores">
+            <summary>
+            Gets a dictionary containing the DisplayCores for each ReferenceHub.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.DisplayCore.IgnoreUpdate">
+            <summary>
+            Gets or sets a value indicating whether or not updates will currently be ignored.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.Get(ReferenceHub)">
+            <summary>
+            Gets a DisplayCore from a <see cref="T:ReferenceHub"/>, or creates it if it doesn't exist.
+            </summary>
+            <param name="hub">The hub to get the display for.</param>
+            <returns>The DisplayCore.</returns>
+            <remarks>This method will never fail nor return null.</remarks>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.GetReference``1">
+            <summary>
+            Gets a new <see cref="T:RueI.Displays.IElemReference`1"/>.
+            </summary>
+            <typeparam name="T">The type of the element.</typeparam>
+            <returns>A new, unique <see cref="T:RueI.Displays.IElemReference`1"/>.</returns>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.Update(System.Int32)">
+            <summary>
+            Updates this <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="priority">The priority of the update - defaults to 10.</param>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.GetElement``1(RueI.Displays.IElemReference{``0})">
+            <summary>
+            Gets an <see cref="T:RueI.Elements.Element"/> as <typeparamref name="T"/> if the <see cref="T:RueI.Displays.IElemReference`1"/> exists within this <see cref="T:RueI.Displays.DisplayCore"/>'s element references.
+            </summary>
+            <typeparam name="T">The type of the <see cref="T:RueI.Elements.Element"/> to get.</typeparam>
+            <param name="reference">The <see cref="T:RueI.Displays.IElemReference`1"/> to use.</param>
+            <returns>The instance of <typeparamref name="T"/> if the <see cref="T:RueI.Elements.Element"/> exists within the <see cref="T:RueI.Displays.DisplayCore"/>'s element references, otherwise null.</returns>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.GetElementOrNew``1(RueI.Displays.IElemReference{``0},System.Func{``0})">
+            <summary>
+            Gets an <see cref="T:RueI.Elements.Element"/> as <typeparamref name="T"/>, or creates it.
+            </summary>
+            <typeparam name="T">The type of the <see cref="T:RueI.Elements.Element"/> to get.</typeparam>
+            <param name="reference">The <see cref="T:RueI.Displays.IElemReference`1"/> to use.</param>
+            <param name="creator">A function that creates a new instance of <typeparamref name="T"/> if it does not exist.</param>
+            <returns>The instance of <typeparamref name="T"/>.</returns>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.AddAsReference``1(RueI.Displays.IElemReference{``0},``0)">
+            <summary>
+            Adds an <see cref="T:RueI.Elements.Element"/> as an <see cref="T:RueI.Displays.IElemReference`1"/>.
+            </summary>
+            <typeparam name="T">The type of the <see cref="T:RueI.Elements.Element"/> to add.</typeparam>
+            <param name="reference">The <see cref="T:RueI.Displays.IElemReference`1"/> to use.</param>
+            <param name="element">The <see cref="T:RueI.Elements.Element"/> to add.</param>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.RemoveReference``1(RueI.Displays.IElemReference{``0})">
+            <summary>
+            Removes a <see cref="T:RueI.Displays.IElemReference`1"/> from this <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <typeparam name="T">The type of the <see cref="T:RueI.Elements.Element"/> to remove.</typeparam>
+            <param name="reference">The <see cref="T:RueI.Displays.IElemReference`1"/> to remove.</param>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.GetText">
+            <summary>
+            Gets the text of this <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <returns>The text that is combined to become a single hint.</returns>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.InternalUpdate">
+            <summary>
+            Updates this display, skipping all checks.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.AddDisplay(RueI.Displays.DisplayBase)">
+            <summary>
+            Adds a display to this <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="display">The display to add.</param>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.RemoveDisplay(RueI.Displays.DisplayBase)">
+            <summary>
+            Removes a display from this <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="display">The display to remove.</param>
+        </member>
+        <member name="M:RueI.Displays.DisplayCore.OnRestart">
+            <summary>
+            Cleans up the dictionary after the server restarts.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.ElemCombiner">
+            <summary>
+            Provides a means of combining <see cref="T:RueI.Elements.Element"/>s.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.Displays.ElemCombiner"/> is a helper class that combines all of the <see cref="T:RueI.Elements.Element"/>s for a <see cref="T:RueI.Displays.DisplayCore"/> into a single string,
+            to be displayed as a hint.
+            </remarks>
+        </member>
+        <member name="M:RueI.Displays.ElemCombiner.Combine(RueI.Displays.DisplayCore,System.Collections.Generic.IEnumerable{RueI.Elements.Element})">
+            <summary>
+            Combines multiple <see cref="T:RueI.Elements.Element"/>s into a string.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> of the player.</param>
+            <param name="enumElems">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:RueI.Elements.Element"/>s to combine.</param>
+            <returns>A <see cref="T:System.String"/> with all of the combined <see cref="T:RueI.Elements.Element"/>s.</returns>
+        </member>
+        <member name="M:RueI.Displays.ElemCombiner.CalculateOffset(System.Single,System.Single,System.Single)">
+            <summary>
+            Calculates the offset for two hints.
+            </summary>
+            <param name="hintOnePos">The first hint's vertical position.</param>
+            <param name="hintOneTotalLines">The first hint's total line-height, excluding the vertical position.</param>
+            <param name="hintTwoPos">The second hint's vertical position.</param>
+            <returns>A float indicating the new offset.</returns>
+        </member>
+        <member name="T:RueI.Displays.IElemReference`1">
+            <summary>
+            Represents a reference to an element present within any number of player's displays.
+            </summary>
+            <typeparam name="T">The type of the element to act as a reference to.</typeparam>
+        </member>
+        <member name="T:RueI.Displays.Interfaces.IElementContainer">
+            <summary>
+            Defines a container for multiple elements.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Interfaces.IElementContainer.Elements">
+            <summary>
+            Gets the elements of this <see cref="T:RueI.Displays.Interfaces.IElementContainer"/>.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.Cooldown">
+            <summary>
+            Provides a way to implement a cooldown easily.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Cooldown.Length">
+            <summary>
+            Gets or sets the current length of the cooldown.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Cooldown.TimeLeft">
+            <summary>
+            Gets the amount of time left for the cooldown.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Cooldown.Active">
+            <summary>
+            Gets a value indicating whether or not the cooldown is active.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Cooldown.Start(System.TimeSpan)">
+            <summary>
+            Starts the cooldown.
+            </summary>
+            <param name="length">How long the cooldown should last.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Cooldown.Start(System.Single)">
+            <summary>
+            Starts the cooldown.
+            </summary>
+            <param name="length">In seconds, how long the cooldown should last.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Cooldown.Pause">
+            <summary>
+            Pauses the cooldown.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Cooldown.Resume">
+            <summary>
+            Resume the cooldown if it is paused.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.JobToken">
+            <summary>
+            Represents a reference to any number of <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.
+            </summary>
+            <remarks>
+            A <see cref="T:RueI.Displays.Scheduling.JobToken"/> provides a unique identifier for a <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> within any number of
+            <see cref="T:RueI.Displays.Scheduling.Scheduler"/>s. In other words, a <see cref="T:RueI.Displays.Scheduling.JobToken"/> can reference multiple (or no) jobs,
+            but only a single job with the given <see cref="T:RueI.Displays.Scheduling.JobToken"/> can exist in a <see cref="T:RueI.Displays.Scheduling.Scheduler"/>.
+            </remarks>
+            <seealso cref="T:RueI.Displays.Scheduling.ScheduledJob"/>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.JobToken.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Scheduling.JobToken"/> class.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.RateLimiter">
+            <summary>
+            Provides a way to ratelimit actions or detect ratelimits.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.Displays.Scheduling.RateLimiter"/> operates using a simple token bucket ratelimiting algorithm.
+            </remarks>
+            <seealso cref="T:RueI.Displays.Scheduling.Scheduler"/>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.RateLimiter.#ctor(System.Int32,System.TimeSpan)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Scheduling.RateLimiter"/> class.
+            </summary>
+            <param name="tokenLimit">The maximum number of tokens and the default number of tokens.</param>
+            <param name="regenRate">How quickly tokens are regenerated after they have been consumed.</param>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.RateLimiter.RegenRate">
+            <summary>
+            Gets or sets the regeneration rate for this ratelimiter.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.RateLimiter.TokenLimit">
+            <summary>
+            Gets or sets the limit on tokens in this ratelimiter.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.RateLimiter.Tokens">
+            <summary>
+            Gets the number of tokens available in this ratelimiter.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.RateLimiter.HasTokens">
+            <summary>
+            Gets a value indicating whether or not this ratelimiter has a token available.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.RateLimiter.TryConsume">
+            <summary>
+            Tries to consume a token from this ratelimiter.
+            </summary>
+            <returns>A value indicating whether or not this <see cref="T:RueI.Displays.Scheduling.RateLimiter"/> has a token available.</returns>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.RateLimiter.Consume">
+            <summary>
+            Consumes a token from this ratelimiter.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.RateLimiter.CalculateNewTokens">
+            <summary>
+            Calculates the number of new tokens for this ratelimiter.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.Records.BatchJob">
+             <summary>
+             Defines a number of <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>s that will performed at a certain time.
+             </summary>
+            
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Records.BatchJob.#ctor(System.Collections.Generic.List{RueI.Displays.Scheduling.ScheduledJob},System.DateTimeOffset)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Scheduling.Records.BatchJob"/> class.
+            </summary>
+            <param name="jobs">The jobs to perform.</param>
+            <param name="performAt">When the jobs should be performed.</param>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Records.BatchJob.Jobs">
+            <summary>
+            Gets the list of <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> for this <see cref="T:RueI.Displays.Scheduling.Records.BatchJob"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Records.BatchJob.PerformAt">
+            <summary>
+            Gets when this <see cref="T:RueI.Displays.Scheduling.Records.BatchJob"/> will be performed.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.ScheduledJob">
+            <summary>
+            Defines a scheduled job for a <see cref="T:RueI.Displays.Scheduling.Scheduler"/>.
+            </summary>
+            <seealso cref="T:RueI.Displays.Scheduling.Scheduler"/>
+            <seealso cref="T:RueI.Displays.Scheduling.JobToken"/>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.ScheduledJob.#ctor(System.DateTimeOffset,System.Action,System.Int32,RueI.Displays.Scheduling.JobToken)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> class.
+            </summary>
+            <param name="finishAt">When the job should be performed.</param>
+            <param name="action">The action to perform when done.</param>
+            <param name="priority">The priority of the element.</param>
+            <param name="token">A token to assign to this <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.</param>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.ScheduledJob.Action">
+            <summary>
+            Gets the action that will be performed when this job is done.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.ScheduledJob.FinishAt">
+            <summary>
+            Gets when the job would optimally be performed at.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.ScheduledJob.Priority">
+            <summary>
+            Gets the priority of the element.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.ScheduledJob.Token">
+            <summary>
+            Gets the <see cref="T:RueI.Displays.Scheduling.JobToken"/> of this, if it has one.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.ScheduledJob.CompareTo(RueI.Displays.Scheduling.ScheduledJob)">
+            <summary>
+            Compares this <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> to another job.
+            </summary>
+            <param name="other">The other <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.</param>
+            <returns>An int indicating whether or not the <see cref="T:System.DateTimeOffset"/> of this job comes before or after the other.</returns>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.Scheduler">
+            <summary>
+            Provides a means of doing batch operations.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.Displays.Scheduling.Scheduler"/> is a powerful class that enables "batch operations". This means that multiple updates to a display can happen at once, helping to avoid the hint ratelimit.
+            More detailed information is available at <see href="https://ruemena.github.io/RueI/markdown/scheduling.html">Using the Scheduler</see>.
+            </remarks>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.#ctor(RueI.Displays.DisplayCore)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Scheduling.Scheduler"/> class.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to use.</param>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Scheduler.RateLimitActive">
+            <summary>
+            Gets a value indicating whether or not the rate limit is currently active.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.Scheduler.Now">
+            <summary>
+            Gets the <see cref="T:System.DateTimeOffset"/> used by <see cref="T:RueI.Displays.Scheduling.Scheduler"/> classes for the current timeSChedued.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.CalculateWeighted(System.Collections.Generic.IEnumerable{RueI.Displays.Scheduling.ScheduledJob})">
+            <summary>
+            Calculates the weighted time for a list of jobs to be performed.
+            </summary>
+            <param name="jobs">The <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> operations to schedule.</param>
+            <returns>The weighted <see cref="T:System.DateTimeOffset"/> of all of the jobs.</returns>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.Schedule(RueI.Displays.Scheduling.ScheduledJob)">
+            <summary>
+            Schedules a <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.
+            </summary>
+            <param name="job">The job to schedule.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.Schedule(System.Collections.Generic.IEnumerable{RueI.Displays.Scheduling.ScheduledJob})">
+            <summary>
+            Schedules multiple <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> operations.
+            </summary>
+            <param name="jobs">The jobs to schedule.</param>
+            <remarks>
+            When scheduling multiple jobs at a time, this method is preferred to calling <see cref="M:RueI.Displays.Scheduling.Scheduler.Schedule(RueI.Displays.Scheduling.ScheduledJob)"/> several
+            times since it only recalculates the batches once.
+            </remarks>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.Schedule(RueI.Displays.Scheduling.ScheduledJob,RueI.Displays.Scheduling.ScheduledJob[])">
+            <summary>
+            Schedules multiple <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> operations.
+            </summary>
+            <param name="job">The first <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> to schedule.</param>
+            <param name="jobs">The rest of the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> operations to schedule.</param>
+            <inheritdoc cref="M:RueI.Displays.Scheduling.Scheduler.Schedule(System.Collections.Generic.IEnumerable{RueI.Displays.Scheduling.ScheduledJob})" path="/remarks"/>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.ScheduleUpdate(System.TimeSpan,System.Int32)">
+            <summary>
+            Schedules an uncancellable update <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.
+            </summary>
+            <param name="time">How long into the future to update at.</param>
+            <param name="priority">The priority of the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>, giving it additional weight when calculating.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.ScheduleUpdateToken(System.TimeSpan,System.Int32,RueI.Displays.Scheduling.JobToken)">
+            <summary>
+            Schedules an update <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> with the <see cref="T:RueI.Displays.Scheduling.JobToken"/>.
+            </summary>
+            <param name="time">How long into the future to update at.</param>
+            <param name="priority">The priority of the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>, giving it additional weight when calculating.</param>
+            <param name="token">A token to assign to the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.Schedule(System.TimeSpan,System.Action,System.Int32,RueI.Displays.Scheduling.JobToken)">
+            <summary>
+            Schedules a new <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.
+            </summary>
+            <param name="time">How long into the future to run the action at.</param>
+            <param name="action">The <see cref="T:System.Action"/> to run.</param>
+            <param name="priority">The priority of the job, giving it additional weight when calculating.</param>
+            <param name="token">An optional token to assign to the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.Schedule(System.TimeSpan,System.Action,RueI.Displays.Scheduling.JobToken)">
+            <summary>
+            Schedules a <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> with a priority of 1.
+            </summary>
+            <param name="time">How long into the future to run the action at.</param>
+            <param name="action">The <see cref="T:System.Action"/> to run.</param>
+            <param name="token">An optional token to assign to the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.ReplaceJob(System.TimeSpan,System.Action,RueI.Displays.Scheduling.JobToken,System.Int32)">
+            <summary>
+            Replaces the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> with the <see cref="T:RueI.Displays.Scheduling.JobToken"/> with a new job.
+            </summary>
+            <param name="time">How long into the future to run the action at.</param>
+            <param name="action">The <see cref="T:System.Action"/> to run.</param>
+            <param name="token">An optional token to assign to the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/>.</param>
+            <param name="priority">The priority of the job.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.KillJob(RueI.Displays.Scheduling.JobToken)">
+            <summary>
+            Attempts to kill the <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> with the <see cref="T:RueI.Displays.Scheduling.JobToken"/>.
+            </summary>
+            <param name="token">The <see cref="T:RueI.Displays.Scheduling.JobToken"/> to use as a reference.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.Delay(System.TimeSpan)">
+            <summary>
+            Delays any updates from occuring for a certain period of time.
+            </summary>
+            <param name="time">The amount of time to delay for.</param>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.UpdateBatches">
+            <summary>
+            Recalculates the next <see cref="T:RueI.Displays.Scheduling.Records.BatchJob"/> for this <see cref="T:RueI.Displays.Scheduling.Scheduler"/>, and potentially starts it.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.PerformFirstBatch">
+            <summary>
+            Immediately performs the first <see cref="T:RueI.Displays.Scheduling.Records.BatchJob"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Scheduling.Scheduler.ScheduleNoUpdate(RueI.Displays.Scheduling.ScheduledJob)">
+            <summary>
+            Schedules a job without recalculating the batches.
+            </summary>
+            <param name="job">The <see cref="T:RueI.Displays.Scheduling.ScheduledJob"/> to schedule.</param>
+        </member>
+        <member name="T:RueI.Displays.Scheduling.TimedElemRef`1">
+            <summary>
+            Represents a <see cref="T:RueI.Displays.IElemReference`1"/> with an associated <see cref="T:RueI.Displays.Scheduling.JobToken"/>.
+            </summary>
+            <typeparam name="T">The type of the element.</typeparam>
+            <remarks>A <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/> is an <see cref="T:RueI.Displays.IElemReference`1"/> that also provides a <see cref="T:RueI.Displays.Scheduling.JobToken"/>, allowing for both of these to be easily stored together.</remarks>
+        </member>
+        <member name="P:RueI.Displays.Scheduling.TimedElemRef`1.JobToken">
+            <summary>
+            Gets the <see cref="T:RueI.Displays.Scheduling.JobToken"/> for this element reference.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.Screen">
+            <summary>
+            Represents a <see cref="T:RueI.Displays.Interfaces.IElementContainer"/> inside a <see cref="T:RueI.Displays.ScreenDisplay"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Screen.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Screen"/> class.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.Screen.#ctor(RueI.Displays.ScreenDisplay)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.Screen"/> class.
+            </summary>
+            <param name="scrDisplay">The <see cref="T:RueI.Displays.ScreenDisplay"/> to add this to.</param>
+        </member>
+        <member name="P:RueI.Displays.Screen.Elements">
+            <summary>
+            Gets the elements of this screen.
+            </summary>
+        </member>
+        <member name="T:RueI.Displays.ScreenDisplay">
+            <summary>
+            Represents a display attached to a <see cref="T:RueI.Displays.DisplayCore"/> with support for <see cref="T:RueI.Displays.Screen"/>s.
+            </summary>
+            <remarks>
+            A <see cref="T:RueI.Displays.ScreenDisplay"/> is a version of the <see cref="T:RueI.Displays.Display"/> that contains a list of <see cref="T:RueI.Displays.Screen"/>s.
+            A <see cref="T:RueI.Displays.Screen"/> acts as a container for <see cref="T:RueI.Elements.Element"/>s, and only one can be active in a <see cref="T:RueI.Displays.ScreenDisplay"/>
+            at a time.
+            </remarks>
+        </member>
+        <member name="M:RueI.Displays.ScreenDisplay.#ctor(ReferenceHub,RueI.Displays.Screen)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.ScreenDisplay"/> class.
+            </summary>
+            <param name="hub">The <see cref="T:ReferenceHub"/> to assign the display to.</param>
+            <param name="screen">The default <see cref="T:RueI.Displays.Screen"/> to use for this <see cref="T:RueI.Displays.ScreenDisplay"/>.</param>
+        </member>
+        <member name="M:RueI.Displays.ScreenDisplay.#ctor(RueI.Displays.DisplayCore,RueI.Displays.Screen)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Displays.ScreenDisplay"/> class.
+            </summary>
+            <param name="coordinator">The <see cref="T:RueI.Displays.DisplayCore"/> to assign the display to.</param>
+            <param name="screen">The default <see cref="T:RueI.Displays.Screen"/> to use for this <see cref="T:RueI.Displays.ScreenDisplay"/>.</param>w
+        </member>
+        <member name="P:RueI.Displays.ScreenDisplay.CurrentScreen">
+            <summary>
+            Gets the current screen of this display.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.ScreenDisplay.Screens">
+            <summary>
+            Gets all of the screens of this display.
+            </summary>
+        </member>
+        <member name="P:RueI.Displays.ScreenDisplay.GlobalElements">
+            <summary>
+            Gets the elements of this display that will be displayed regardless of screen.
+            </summary>
+        </member>
+        <member name="M:RueI.Displays.ScreenDisplay.SetScreen(RueI.Displays.Screen)">
+            <summary>
+            Sets the <see cref="P:RueI.Displays.ScreenDisplay.CurrentScreen"/> of this display.
+            </summary>
+            <param name="screen">The <see cref="T:RueI.Displays.Screen"/> to set the <see cref="P:RueI.Displays.ScreenDisplay.CurrentScreen"/> to.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when <paramref name="screen"/> is not a <see cref="T:RueI.Displays.Screen"/> within <see cref="P:RueI.Displays.ScreenDisplay.Screens"/>.</exception>
+        </member>
+        <member name="M:RueI.Displays.ScreenDisplay.GetAllElements">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Elements.Delegates.GetContent">
+            <summary>
+            Defines a method used to get content for an element.
+            </summary>
+            <param name="hub">The <see cref="T:RueI.Displays.DisplayCore"/> of the player.</param>
+            <returns>A string with the new content.</returns>
+        </member>
+        <member name="T:RueI.Elements.DynamicElement">
+            <summary>
+            Represents a non-cached element that evaluates and parses a function when getting its content.
+            </summary>
+            <remarks>
+            The content of this element is re-evaluated by calling a function every time the display is updated. This makes it suitable for scenarios where you need to have information constantly updated. For example, you may use this to display the health of SCPs in an SCP list.
+            </remarks>
+        </member>
+        <member name="M:RueI.Elements.DynamicElement.#ctor(RueI.Elements.Delegates.GetContent,System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Elements.DynamicElement"/> class.
+            </summary>
+            <param name="contentGetter">A delegate returning the new content that will be ran every time the display is updated.</param>
+            <param name="position">The scaled position of the element, where 0 is the bottom of the screen and 1000 is the top.</param>
+        </member>
+        <member name="P:RueI.Elements.DynamicElement.Options">
+            <summary>
+            Gets or sets the options for this element.
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.DynamicElement.ContentGetter">
+            <summary>
+            Gets or sets a method that returns the new content and is called every time the display is updated.
+            </summary>
+        </member>
+        <member name="M:RueI.Elements.DynamicElement.GetParsedData(RueI.Displays.DisplayCore)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Elements.Element">
+            <summary>
+            Represents the base class for all elements, which are individual 'hints' present within an arbitrary number of <see cref="T:RueI.Displays.Display"/>s.
+            </summary>
+            <remarks>
+            An <see cref="T:RueI.Elements.Element"/> is how text is displayed within RueI. Each <see cref="T:RueI.Elements.Element"/>
+            acts like an individual <see cref="T:Hints.Hint"/>, and cannot influence other <see cref="T:RueI.Elements.Element"/>s.
+            </remarks>
+        </member>
+        <member name="M:RueI.Elements.Element.#ctor(System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Elements.Element"/> class.
+            </summary>
+            <param name="position">The position of the element, where 0 represents the bottom of the screen and 1000 represents the top.</param>
+        </member>
+        <member name="P:RueI.Elements.Element.Enabled">
+            <summary>
+            Gets or sets a value indicating whether or not this element is enabled and will show.
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.Element.Position">
+            <summary>
+            Gets or sets the position of the element on a scale from 0-1000, where 0 represents the bottom of the screen and 1000 represents the top.
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.Element.ZIndex">
+            <summary>
+            Gets or sets the priority of the hint (determining if it shows above another hint).
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.Element.Parser">
+            <summary>
+            Gets or sets the <see cref="P:RueI.Elements.Element.Parser"/> currently in use by this <see cref="T:RueI.Elements.Element"/>.
+            </summary>
+            <remarks>
+            Implementations should default this to <see cref="P:RueI.Parsing.Parser.DefaultParser"/>.
+            </remarks>
+        </member>
+        <member name="P:RueI.Elements.Element.Options">
+            <summary>
+            Gets or sets the options for this element.
+            </summary>
+        </member>
+        <member name="M:RueI.Elements.Element.GetParsedData(RueI.Displays.DisplayCore)">
+            <summary>
+            Gets the data used for parsing.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> of the player.</param>
+            <returns>The <see cref="T:RueI.Parsing.Records.ParsedData"/> for the element.</returns>
+            <remarks>
+            This contains information used to ensure that multiple elements can be displayed at once. To obtain this, you must use <see cref="M:RueI.Parsing.Parser.Parse(System.String,RueI.Elements.Enums.ElementOptions)"/>.
+            </remarks>
+        </member>
+        <member name="T:RueI.Elements.Enums.ElementOptions">
+            <summary>
+            Provides options for elements.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.Elements.Enums.ElementOptions"/> enum is a bitwise flag enum. This means that the values
+            of this enum are not mutually exclusive. You can combine values using the bitwise OR operator |
+            to specify that multiple options should be used.
+            </remarks>
+        </member>
+        <member name="F:RueI.Elements.Enums.ElementOptions.NoparseParsesEscape">
+            <summary>
+            Indicates whether or not noparse parses escape sequences like \r, \u, and \n.
+            </summary>
+        </member>
+        <member name="F:RueI.Elements.Enums.ElementOptions.PreserveSpacing">
+            <summary>
+            Indicates whether or not the vertical spacing of an element affects the baseline.
+            </summary>
+        </member>
+        <member name="F:RueI.Elements.Enums.ElementOptions.UseFunctionalPosition">
+            <summary>
+            Indicates whether or not to automatically use functional positioning for the element.
+            </summary>
+            <seealso cref="M:RueI.Ruetility.FunctionalToScaledPosition(System.Single)"/>
+        </member>
+        <member name="F:RueI.Elements.Enums.ElementOptions.Default">
+            <summary>
+            Gets the default element settings.
+            </summary>
+        </member>
+        <member name="F:RueI.Elements.Enums.ElementOptions.Vanilla">
+            <summary>
+            Gets the vanilla options for hints.
+            </summary>
+        </member>
+        <member name="T:RueI.Elements.FixedElement">
+            <summary>
+            Represents a cached element with a fixed content.
+            </summary>
+        </member>
+        <member name="M:RueI.Elements.FixedElement.#ctor(System.Single,System.String,RueI.Elements.Enums.ElementOptions,RueI.Parsing.Parser)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Elements.FixedElement"/> class.
+            </summary>
+            <param name="position">The scaled position of the element, where 0 is the bottom of the screen and 1000 is the top.</param>
+            <param name="content">The content to set the element to.</param>
+            <param name="options">The options of the element.</param>
+            <param name="parser">A <see cref="T:RueI.Parsing.Parser"/> to use, or null to use the default parser.</param>
+        </member>
+        <member name="M:RueI.Elements.FixedElement.GetParsedData(RueI.Displays.DisplayCore)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Elements.Interfaces.ISettable">
+            <summary>
+            Defines an <see cref="T:RueI.Elements.Element"/> that can be set.
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.Interfaces.ISettable.Content">
+            <summary>
+            Gets or sets the content of this element.
+            </summary>
+        </member>
+        <member name="T:RueI.Elements.Interfaces.ISettableOptions">
+            <summary>
+            Defines an <see cref="T:RueI.Elements.Element"/> with options that can be set.
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.Interfaces.ISettableOptions.Options">
+            <summary>
+            Gets or sets the <see cref="T:RueI.Elements.Enums.ElementOptions"/> of this element.
+            </summary>
+        </member>
+        <member name="T:RueI.Elements.SetElement">
+            <summary>
+            Represents a simple cached element with settable content.
+            </summary>
+        </member>
+        <member name="M:RueI.Elements.SetElement.#ctor(System.Single,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Elements.SetElement"/> class.
+            </summary>
+            <param name="position">The scaled position of the element, where 0 is the bottom of the screen and 1000 is the top.</param>
+            <param name="content">The content to set the element to.</param>
+        </member>
+        <member name="P:RueI.Elements.SetElement.Content">
+            <summary>
+            Gets or sets the content of this element.
+            </summary>
+        </member>
+        <member name="P:RueI.Elements.SetElement.Options">
+            <summary>
+            Gets or sets the options for this element.
+            </summary>
+        </member>
+        <member name="M:RueI.Elements.SetElement.GetParsedData(RueI.Displays.DisplayCore)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.Events.DisplayUpdatedEventArgs">
+            <summary>
+            Contains all information after a player's <see cref="T:RueI.Displays.DisplayCore"/> is updated.
+            </summary>
+        </member>
+        <member name="M:RueI.Events.DisplayUpdatedEventArgs.#ctor(RueI.Displays.DisplayCore)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.Events.DisplayUpdatedEventArgs"/> class.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> that has been updated.</param>
+        </member>
+        <member name="P:RueI.Events.DisplayUpdatedEventArgs.DisplayCore">
+            <summary>
+            Gets the updated <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+        </member>
+        <member name="P:RueI.Events.DisplayUpdatedEventArgs.ReferenceHub">
+            <summary>
+            Gets the <see cref="T:ReferenceHub"/> of the updated core.
+            </summary>
+        </member>
+        <member name="P:RueI.Events.DisplayUpdatedEventArgs.Scheduler">
+            <summary>
+            Gets the <see cref="T:RueI.Displays.Scheduling.Scheduler"/> of the updated core.
+            </summary>
+        </member>
+        <member name="T:RueI.Events.Events">
+            <summary>
+            Provides events for use by plugins using RueI.
+            </summary>
+        </member>
+        <member name="T:RueI.Events.Events.RueIEvent`1">
+            <summary>
+            Represents a custom RueI event.
+            </summary>
+            <typeparam name="T">The <see cref="T:System.EventArgs"/> class to use.</typeparam>
+            <param name="ev">The event args to use. </param>
+        </member>
+        <member name="E:RueI.Events.Events.DisplayUpdated">
+            <summary>
+            Called after a player's <see cref="T:RueI.Displays.DisplayCore"/> is updated.
+            </summary>
+        </member>
+        <member name="M:RueI.Events.Events.OnDisplayUpdated(RueI.Events.DisplayUpdatedEventArgs)">
+            <summary>
+            Calls <see cref="E:RueI.Events.Events.DisplayUpdated"/> after a display is updated.
+            </summary>
+            <param name="ev">The event args to use.</param>
+        </member>
+        <member name="T:RueI.Extensions.DisplayCoreExtensions">
+            <summary>
+            Provides miscellaneous utility for <see cref="T:RueI.Displays.DisplayCore"/>s.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.DisplayCoreExtensions.SetElementOrNew(RueI.Displays.DisplayCore,RueI.Displays.IElemReference{RueI.Elements.SetElement},System.String,System.Single)">
+            <summary>
+            Sets the content of a <see cref="T:RueI.Elements.SetElement"/> <see cref="T:RueI.Displays.IElemReference`1"/>, or creates it.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to use.</param>
+            <param name="reference">The <see cref="T:RueI.Displays.IElemReference`1"/> to use.</param>
+            <param name="content">The new content of the <see cref="T:RueI.Elements.SetElement"/>.</param>
+            <param name="position">The position of the <see cref="T:RueI.Elements.SetElement"/> if it needs to be created.</param>
+        </member>
+        <member name="M:RueI.Extensions.DisplayCoreExtensions.AddTemp``1(RueI.Displays.DisplayCore,``0,System.TimeSpan,RueI.Displays.Scheduling.TimedElemRef{``0})">
+            <summary>
+            Temporarily adds an <see cref="T:RueI.Elements.Element"/> to a <see cref="T:RueI.Displays.DisplayCore"/> using the specified <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/>.
+            This method updates the <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to add the element to.</param>
+            <param name="element">The element to add.</param>
+            <param name="time">How long to add the element to the <see cref="T:RueI.Displays.DisplayCore"/> for.</param>
+            <param name="elemRef">The <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/> to use.</param>
+            <typeparam name="T">The type of the element.</typeparam>
+        </member>
+        <member name="M:RueI.Extensions.DisplayCoreExtensions.SetElemTemp(RueI.Displays.DisplayCore,System.String,System.Single,System.TimeSpan,RueI.Displays.Scheduling.TimedElemRef{RueI.Elements.SetElement})">
+            <summary>
+            Temporarily adds a <see cref="T:RueI.Elements.SetElement"/> using the provided string and position, or sets it if it already exists.
+            This method updates the <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to add the element to.</param>
+            <param name="content">The content of the element.</param>
+            <param name="position">The position of the element.</param>
+            <param name="time">How long to keep the element in the <see cref="T:RueI.Displays.DisplayCore"/> for.</param>
+            <param name="elemRef">The <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/> to use.</param>
+        </member>
+        <member name="M:RueI.Extensions.DisplayCoreExtensions.SetElemTempFunctional(RueI.Displays.DisplayCore,System.String,System.Single,System.TimeSpan,RueI.Displays.Scheduling.TimedElemRef{RueI.Elements.SetElement})">
+            <summary>
+            Temporarily adds a <see cref="T:RueI.Elements.SetElement"/> using the provided string and functional position, or sets it if it already exists.
+            This method updates the <see cref="T:RueI.Displays.DisplayCore"/>.
+            </summary>
+            <param name="core">The <see cref="T:RueI.Displays.DisplayCore"/> to add the element to.</param>
+            <param name="content">The content of the element.</param>
+            <param name="position">The position of the element.</param>
+            <param name="time">How long to keep the element in the <see cref="T:RueI.Displays.DisplayCore"/> for.</param>
+            <param name="elemRef">The <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/> to use.</param>
+        </member>
+        <member name="T:RueI.Extensions.ElementHelpers">
+            <summary>
+            Provides extensions and helpers for working with elements.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.ElementHelpers.FilterDisabled(System.Collections.Generic.IEnumerable{RueI.Elements.Element})">
+            <summary>
+            Filters out all of the disabled <see cref="T:RueI.Elements.Element"/>s in an <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <param name="elements">The elements to filter.</param>
+            <returns>The filtered <see cref="T:System.Collections.Generic.IEnumerable`1"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.ElementHelpers.GetFunctionalPosition(RueI.Elements.Element)">
+            <summary>
+            Gets the functional (un-scaled) position of an element.
+            </summary>
+            <param name="element">The element to get the position for.</param>
+            <returns>The un-scaled position.</returns>
+        </member>
+        <member name="T:RueI.Extensions.EnumExtensions">
+            <summary>
+            Provides extensions for working with RueI <see cref="T:System.Enum"/>s.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.EnumExtensions.HasFlagFast(RueI.Displays.Roles,RueI.Displays.Roles)">
+            <summary>
+            Quickly determines if a <see cref="T:RueI.Displays.Roles"/> has another <see cref="T:RueI.Displays.Roles"/>.
+            </summary>
+            <param name="first">The first <see cref="T:RueI.Displays.Roles"/>.</param>
+            <param name="second">The other <see cref="T:RueI.Displays.Roles"/>.</param>
+            <returns>A value indicating whether or not the first has all of the flags of the second.</returns>
+            <remarks>
+            This method is faster than <see cref="M:System.Enum.HasFlag(System.Enum)"/>, because it skips checking whether or not
+            <paramref name="second"/> is a valid option and avoids boxing/unboxing.
+            </remarks>
+        </member>
+        <member name="M:RueI.Extensions.EnumExtensions.HasFlagFast(RueI.Elements.Enums.ElementOptions,RueI.Elements.Enums.ElementOptions)">
+            <summary>
+            Quickly determines if an <see cref="T:RueI.Elements.Enums.ElementOptions"/> has another <see cref="T:RueI.Elements.Enums.ElementOptions"/>.
+            </summary>
+            <param name="first">The first <see cref="T:RueI.Elements.Enums.ElementOptions"/>.</param>
+            <param name="second">The other <see cref="T:RueI.Elements.Enums.ElementOptions"/>.</param>
+            <returns>A value indicating whether or not the first has all of the flags of the second.</returns>
+            <inheritdoc cref="M:RueI.Extensions.EnumExtensions.HasFlagFast(RueI.Displays.Roles,RueI.Displays.Roles)" path="/remarks"/>
+        </member>
+        <member name="M:RueI.Extensions.EnumExtensions.HasFlagFast(RueI.Displays.Roles,PlayerRoles.RoleTypeId)">
+            <summary>
+            Quickly determines if a <see cref="T:RueI.Displays.Roles"/> has a <see cref="T:PlayerRoles.RoleTypeId"/>.
+            </summary>
+            <param name="first">The first <see cref="T:RueI.Displays.Roles"/>.</param>
+            <param name="second">The other <see cref="T:RueI.Displays.Roles"/>.</param>
+            <returns>A value indicating whether or not the first has the <see cref="T:PlayerRoles.RoleTypeId"/> of the second.</returns>
+        </member>
+        <member name="T:RueI.Extensions.HintBuilding.HintBuilding">
+            <summary>
+            Provides extensions for adding rich text tags to <see cref="T:System.Text.StringBuilder"/>s.
+            </summary>
+        </member>
+        <member name="T:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle">
+            <summary>
+            Represents all of the options for the alignment of a string of text.
+            </summary>
+        </member>
+        <member name="F:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle.Left">
+            <summary>
+            Indicates that the text should be left-aligned.
+            </summary>
+        </member>
+        <member name="F:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle.Center">
+            <summary>
+            Indicates that the text should be center-aligned.
+            </summary>
+        </member>
+        <member name="F:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle.Right">
+            <summary>
+            Indicates that the text should be right-aligned.
+            </summary>
+        </member>
+        <member name="F:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle.Justified">
+            <summary>
+            Indicates that every line should be stretched to fill the display area, excluding the last line.
+            </summary>
+        </member>
+        <member name="F:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle.Flush">
+            <summary>
+            Indicates that every line should be stretched to fill the display area. This includes the last line.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.ConvertToHex(System.Drawing.Color)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Color"/> to a hex code string.
+            </summary>
+            <param name="color">The <see cref="T:System.Drawing.Color"/> to convert.</param>
+            <returns>The color as a hex code string.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.AddLinebreak(System.Text.StringBuilder)">
+            <summary>
+            Adds a linebreak to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetAlignment(System.Text.StringBuilder,RueI.Extensions.HintBuilding.HintBuilding.AlignStyle)">
+            <summary>
+            Adds an alignment tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="align">The <see cref="T:RueI.Extensions.HintBuilding.HintBuilding.AlignStyle"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetSize(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a size tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="size">The size to include in the size tag.</param>
+            <param name="style">The measurement style of the size tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetLineHeight(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a line-height tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="size">The line height to include in the line-height tag.</param>
+            <param name="style">The measurement style of the line-height tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetColor(System.Text.StringBuilder,System.Drawing.Color)">
+            <summary>
+            Adds a color tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="color">The color to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetColor(System.Text.StringBuilder,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adds a color tag to a <see cref="T:System.Text.StringBuilder"/> from RGBA values.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="r">The red (0-255) in the color.</param>
+            <param name="g">The green (0-255) in the color.</param>
+            <param name="b">The blue (0-255) in the color.</param>
+            <param name="alpha">The optional alpha (0-255) of the color.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetColor(System.Text.StringBuilder,System.Byte,System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Adds a color tag to a <see cref="T:System.Text.StringBuilder"/> from RGBA values.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="r">The red (0-255) in the color.</param>
+            <param name="g">The green (0-255) in the color.</param>
+            <param name="b">The blue (0-255) in the color.</param>
+            <param name="alpha">The optional alpha (0-255) of the color.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetMark(System.Text.StringBuilder,System.Drawing.Color)">
+            <summary>
+            Adds a mark tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="color">The color to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetMark(System.Text.StringBuilder,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Adds a mark tag to a <see cref="T:System.Text.StringBuilder"/> from RGBA values.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="r">The red (0-255) in the color.</param>
+            <param name="g">The green (0-255) in the color.</param>
+            <param name="b">The blue (0-255) in the color.</param>
+            <param name="alpha">The optional alpha (0-255) of the color.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetMark(System.Text.StringBuilder,System.Byte,System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Adds a mark tag to a <see cref="T:System.Text.StringBuilder"/> from RGBA values.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="r">The red (0-255) in the color.</param>
+            <param name="g">The green (0-255) in the color.</param>
+            <param name="b">The blue (0-255) in the color.</param>
+            <param name="alpha">The optional alpha (0-255) of the color.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetAlpha(System.Text.StringBuilder,System.Byte)">
+            <summary>
+            Adds an alpha tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="alpha">The alpha (0-255) of the color.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetAlpha(System.Text.StringBuilder,System.Int32)">
+            <summary>
+            Adds an alpha tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="alpha">The alpha (0-255) of the color.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetBold(System.Text.StringBuilder)">
+            <summary>
+            Adds a bold tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetItalics(System.Text.StringBuilder)">
+            <summary>
+            Adds an italics tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetStrikethrough(System.Text.StringBuilder)">
+            <summary>
+            Adds a strikethrough tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetUnderline(System.Text.StringBuilder)">
+            <summary>
+            Adds an underline tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetIndent(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds an indent tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="indent">The indent size to include in the indent tag.</param>
+            <param name="style">The measurement style of the indent tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetScale(System.Text.StringBuilder,System.Single)">
+            <summary>
+            Adds a horizontal scale tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="scale">The scale size to include in the scale tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetMonospace(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a monospace tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="spacing">The size of the spacing.</param>
+            <param name="style">The measurement style of the monospacing tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetCase(System.Text.StringBuilder,RueI.Parsing.Enums.CaseStyle)">
+            <summary>
+            Adds a case tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="caseStyle">The case to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetMargins(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds an margins tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="margins">The size of the margins.</param>
+            <param name="style">The measurement style of the margins tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetNobreak(System.Text.StringBuilder)">
+            <summary>
+            Adds a nobreak tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetNoparse(System.Text.StringBuilder)">
+            <summary>
+            Adds a noparse tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetRotation(System.Text.StringBuilder,System.Int32)">
+            <summary>
+            Adds a rotation tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="rotation">The rotation (-180 to 180) of the tag..</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetSubscript(System.Text.StringBuilder)">
+            <summary>
+            Adds a subscript tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetSuperscript(System.Text.StringBuilder)">
+            <summary>
+            Adds a superscript tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.SetWidth(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a width tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="offset">The size of the new width.</param>
+            <param name="style">The measurement style of the width tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.AddHorizontalPos(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a pos tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="margins">The size of the pos tag.</param>
+            <param name="style">The measurement style of the pos tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.AddSpace(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a space tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="margins">The size of the pos tag.</param>
+            <param name="style">The measurement style of the pos tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.AddVOffset(System.Text.StringBuilder,System.Single,RueI.Parsing.Enums.MeasurementUnit)">
+            <summary>
+            Adds a voffset tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="offset">The size of the voffset tag.</param>
+            <param name="style">The measurement style of the voffset tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.AddSprite(System.Text.StringBuilder,System.Int32)">
+            <summary>
+            Adds a sprite tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="index">The index (0-20) of the sprite tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.AddSprite(System.Text.StringBuilder,System.Int32,System.Drawing.Color)">
+            <summary>
+            Adds a sprite tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <param name="index">The index (0-20) of the sprite tag.</param>
+            <param name="color">The color of the sprite tag.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseColor(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing color tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseAlign(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing align tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseAlpha(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing alpha tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseSize(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing size tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseLineHeight(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing line-height tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseBold(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing bold tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseItalics(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing italics tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseStrikethrough(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing strikethrough tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseUnderline(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing underline tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseIndent(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing indent tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseScale(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing scale tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseMonospace(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing monospace tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseSubscript(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing subscript tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseSuperscript(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing superscript tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseRotation(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing rotation tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseMargins(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing margins tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseMark(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing mark tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseNobreak(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing nobreak tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseNoparse(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing noparse tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseVOffset(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing voffset tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.HintBuilding.HintBuilding.CloseWidth(System.Text.StringBuilder)">
+            <summary>
+            Adds a closing width tag to a <see cref="T:System.Text.StringBuilder"/>.
+            </summary>
+            <param name="sb">The <see cref="T:System.Text.StringBuilder"/> to use.</param>
+            <returns>A reference to the original <see cref="T:System.Text.StringBuilder"/>.</returns>
+        </member>
+        <member name="T:RueI.Extensions.IComparableExtensions">
+            <summary>
+            Provides extensions and helpers for working with classes that implement <see cref="T:System.IComparable`1"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.IComparableExtensions.Max``1(``0,``0)">
+            <summary>
+            Gets the maximum of two <see cref="T:System.IComparable`1"/>.
+            </summary>
+            <typeparam name="T">The type to use.</typeparam>
+            <param name="first">The first value.</param>
+            <param name="second">The second value.</param>
+            <returns>The maximum of the two.</returns>
+        </member>
+        <member name="M:RueI.Extensions.IComparableExtensions.MaxIf``1(``0,System.Boolean,``0)">
+            <summary>
+            Gets the maximum of two <see cref="T:System.IComparable`1"/>, if a bool is true.
+            </summary>
+            <typeparam name="T">The type to use.</typeparam>
+            <param name="first">The first value.</param>
+            <param name="check">Whether or not to perform the check.</param>
+            <param name="second">The second value.</param>
+            <returns>The maximum of the two, or the first value if the bool is true.</returns>
+        </member>
+        <member name="T:RueI.Extensions.IEnumerableExtensions">
+            <summary>
+            Provides extensions for working with collections.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.IEnumerableExtensions.Only``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            Determines if a <see cref="T:System.Collections.Generic.IEnumerable`1"/> has only one element that passes a filter.
+            </summary>
+            <typeparam name="T">The inner type of the <see cref="T:System.Collections.Generic.IEnumerable`1"/>.</typeparam>
+            <param name="enumerable">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> to check.</param>
+            <param name="filter">A filter to use.</param>
+            <returns>true if there is only one element in the <see cref="T:System.Collections.Generic.IEnumerable`1"/> and that element passes the filter, otherwise false.</returns>
+        </member>
+        <member name="M:RueI.Extensions.IEnumerableExtensions.Only``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determines if a <see cref="T:System.Collections.Generic.IEnumerable`1"/> has only one element.
+            </summary>
+            <typeparam name="T">The inner type of the <see cref="T:System.Collections.Generic.IEnumerable`1"/>.</typeparam>
+            <param name="enumerable">The <see cref="T:System.Collections.Generic.IEnumerable`1"/> to check.</param>
+            <returns>true if there is only one element in the <see cref="T:System.Collections.Generic.IEnumerable`1"/>.</returns>
+        </member>
+        <member name="M:RueI.Extensions.IEnumerableExtensions.GetMultiple``2(System.Collections.Generic.IDictionary{``0,System.Collections.Generic.IEnumerable{``1}},``0)">
+            <summary>
+            Gets a <see cref="T:System.Collections.Generic.IEnumerable`1"/> of values from a <see cref="T:System.Collections.Generic.IDictionary`2"/> using the key.
+            </summary>
+            <typeparam name="TKey">The type of the dictionary's key.</typeparam>
+            <typeparam name="TValue">The type of the dictionary's value.</typeparam>
+            <param name="dict">The dictionary to use.</param>
+            <param name="key">The key to search with.</param>
+            <returns>The <see cref="T:System.Collections.Generic.IEnumerable`1"/>, or <see cref="M:System.Linq.Enumerable.Empty``1"/> if it is not found.</returns>
+        </member>
+        <member name="T:RueI.Extensions.ReflectionHelpers">
+            <summary>
+            Contains methods designed for use by reflection.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.ReflectionHelpers.GetElementShower">
+            <summary>
+            Gets an <see cref="T:System.Action`4"/> that can be used to add an element, with a <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/> as a closure.
+            </summary>
+            <returns>An <see cref="T:System.Action`4"/> that can be used to add an element to a <see cref="T:ReferenceHub"/>.</returns>
+            <remarks>
+            Every time this method is called, it creates a new <see cref="T:RueI.Displays.Scheduling.TimedElemRef`1"/>. Therefore, every delegate returned by this method
+            represents a unique 'element'.
+            </remarks>
+        </member>
+        <member name="M:RueI.Extensions.ReflectionHelpers.GetElemCreator">
+            <summary>
+            Gets a <see cref="T:System.Func`1"/> that can be used to easily call <see cref="M:RueI.Extensions.ReflectionHelpers.GetElementShower"/>.
+            </summary>
+            <returns>A <see cref="T:System.Func`1"/> that itself returns an <see cref="T:System.Action`4"/>.</returns>
+            <remarks>
+            The <see cref="T:System.Func`1"/> returned by this method is identical to calling <see cref="M:RueI.Extensions.ReflectionHelpers.GetElementShower"/>.
+            This method serves a helper to easily turn GetElementShower into a <see cref="T:System.Func`1"/>, to make
+            reflection easier.
+            </remarks>
+        </member>
+        <member name="T:RueI.Extensions.UniversalExtensions">
+            <summary>
+            Provides extensions for working with all types.
+            </summary>
+        </member>
+        <member name="M:RueI.Extensions.UniversalExtensions.AddTo``1(``0,System.Collections.Generic.ICollection{``0})">
+            <summary>
+            Adds this instance to an <see cref="T:System.Collections.Generic.ICollection`1"/>.
+            </summary>
+            <typeparam name="T">The type of this instance and the collection to add to.</typeparam>
+            <param name="item">The instance to add.</param>
+            <param name="collection">The collection to add the elements to.</param>
+            <returns>A reference to <paramref name="item"/>.</returns>
+        </member>
+        <member name="T:RueI.Patches.HintPatch">
+            <summary>
+            Patches <see cref="M:Hints.HintDisplay.Show(Hints.Hint)"/> to detect when hints are shown.
+            </summary>
+            <remarks>
+            RueI patches the <see cref="M:Hints.HintDisplay.Show(Hints.Hint)"/> method so that it can get an accurate state of the player's hint display at any given time.
+            When a hint outside of RueI is shown, it schedules an update that occurs after 3 seconds.
+            </remarks>
+        </member>
+        <member name="M:RueI.Patches.HintPatch.Transpiler(System.Collections.Generic.IEnumerable{HarmonyLib.CodeInstruction},System.Reflection.Emit.ILGenerator)">
+            <summary>
+            Patches <see cref="M:Hints.HintDisplay.Show(Hints.Hint)"/> to detect when hints are shown.
+            </summary>
+            <param name="instructions">The original instructions.</param>
+            <param name="generator">An <see cref="T:System.Reflection.Emit.ILGenerator"/> to use.</param>
+            <returns>The new instructions.</returns>
+        </member>
+        <member name="T:RueI.Patches.PatchHelper">
+            <summary>
+            Provides helpful functions for working with patches.
+            </summary>
+        </member>
+        <member name="M:RueI.Patches.PatchHelper.DelegeteMatch``1(System.Type,System.String)">
+            <summary>
+            Finds a matching method using the provided <see cref="T:System.Delegate"/> and name in a type.
+            </summary>
+            <typeparam name="T">The type of the delegate.</typeparam>
+            <param name="type">The type of the class to search.</param>
+            <param name="name">The name of the method.</param>
+            <returns>The <see cref="T:System.Reflection.MethodInfo"/> of the found method, or null if it was not found.</returns>
+        </member>
+        <member name="T:RueI.Ruetility">
+            <summary>
+            Provides helpful functions for dealing with elements and hints.
+            </summary>
+            <remarks>
+            <see cref="T:RueI.Ruetility"/> is a helper class that provides methods for handling scaled and functional values,
+            along with other helpful methods that may not work exclusively with hints.
+            </remarks>
+        </member>
+        <member name="M:RueI.Ruetility.GetCleanText(System.String)">
+            <summary>
+            Cleans a string by wrapping it in noparses, and removes any noparse closer tags existing in it already.
+            </summary>
+            <param name="text">The string to clean.</param>
+            <returns>The cleaned string.</returns>
+        </member>
+        <member name="M:RueI.Ruetility.ScaledPositionToFunctional(System.Single)">
+            <summary>
+            Converts a scaled position from 0-1000 into functional pixels (offset from baseline).
+            </summary>
+            <param name="position">The position to convert.</param>
+            <returns>The converted value.</returns>
+        </member>
+        <member name="M:RueI.Ruetility.FunctionalToScaledPosition(System.Single)">
+            <summary>
+            Converts a functional position into a scaled position.
+            </summary>
+            <param name="position">The position to convert.</param>
+            <returns>The converted value.</returns>
+        </member>
+        <member name="T:RueI.UnityAlternative">
+            <summary>
+            Defines the base class for a provider of methods that may or may not use Unity.
+            </summary>
+            <remarks>
+            The <see cref="T:RueI.UnityAlternative"/> class is primarily intended for internal use within RueI. This enables certain features
+            to work even outside of SCP:SL and Unity, which is utilized primarily for unit-testing.
+            </remarks>
+        </member>
+        <member name="T:RueI.UnityAlternative.IAsyncOperation">
+            <summary>
+            Represents a generalized handler for an async operation.
+            </summary>
+        </member>
+        <member name="P:RueI.UnityAlternative.IAsyncOperation.IsRunning">
+            <summary>
+            Gets a value indicating whether or not this operation is currently running.
+            </summary>
+        </member>
+        <member name="M:RueI.UnityAlternative.IAsyncOperation.Cancel">
+            <summary>
+            Cancels this operation.
+            </summary>
+        </member>
+        <member name="P:RueI.UnityAlternative.Provider">
+            <summary>
+            Gets the current <see cref="T:RueI.UnityAlternative"/> of the application.
+            </summary>
+        </member>
+        <member name="M:RueI.UnityAlternative.Log(System.String,System.ConsoleColor)">
+            <summary>
+            Logs a message to the console.
+            </summary>
+            <param name="message">The message to log.</param>
+            <param name="color">The color of the message.</param>
+        </member>
+        <member name="M:RueI.UnityAlternative.LogWarn(System.String)">
+            <summary>
+            Logs a warning message to the console.
+            </summary>
+            <param name="message">The warn message to log.</param>
+        </member>
+        <member name="M:RueI.UnityAlternative.LogDebug(System.String)">
+            <summary>
+            Logs a debug message to the console.
+            </summary>
+            <param name="message">The debug message to log.</param>
+        </member>
+        <member name="M:RueI.UnityAlternative.PatchAll(HarmonyLib.Harmony)">
+            <summary>
+            Loads all patches.
+            </summary>
+            <param name="harmony">The <see cref="T:HarmonyLib.Harmony"/> instance to use.</param>
+        </member>
+        <member name="M:RueI.UnityAlternative.PerformAsync(System.TimeSpan,System.Action)">
+            <summary>
+            Performs an async operation.
+            </summary>
+            <param name="span">How long until the action should be ran.</param>
+            <param name="action">The action to run when finished.</param>
+            <returns>A <see cref="T:RueI.UnityAlternative.IAsyncOperation"/> to use.</returns>
+        </member>
+        <member name="M:RueI.UnityAlternative.ShowHint(ReferenceHub,System.String)">
+            <summary>
+            Shows a hint for a <see cref="T:ReferenceHub"/>.
+            </summary>
+            <param name="hub">The <see cref="T:ReferenceHub"/> to use.</param>
+            <param name="message">The message to show.</param>
+        </member>
+        <member name="T:RueI.NonUnityProvider">
+            <summary>
+            Provides non-Unity alternatives for the <see cref="T:RueI.UnityProvider"/> of the application.
+            </summary>
+        </member>
+        <member name="M:RueI.NonUnityProvider.Log(System.String,System.ConsoleColor)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.LogWarn(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.LogDebug(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.PatchAll(HarmonyLib.Harmony)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.PerformAsync(System.TimeSpan,System.Action)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.ShowHint(ReferenceHub,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.NonUnityProvider.TaskAsyncOperation">
+            <summary>
+            Represents an async operation using a <see cref="T:System.Threading.Tasks.Task"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.NonUnityProvider.TaskAsyncOperation.#ctor(System.TimeSpan,System.Action)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.NonUnityProvider.TaskAsyncOperation"/> class, and then immediately runs.
+            </summary>
+            <param name="span">How long until the action should be ran.</param>
+            <param name="action">The action to run when finished.</param>
+        </member>
+        <member name="P:RueI.NonUnityProvider.TaskAsyncOperation.IsRunning">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.TaskAsyncOperation.Cancel">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.NonUnityProvider.TaskAsyncOperation.Dispose">
+            <summary>
+            Disposes this async operation.
+            </summary>
+        </member>
+        <member name="T:RueI.UnityProvider">
+            <summary>
+            Provides Unity methods for the application.
+            </summary>
+        </member>
+        <member name="M:RueI.UnityProvider.Log(System.String,System.ConsoleColor)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.LogWarn(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.LogDebug(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.PatchAll(HarmonyLib.Harmony)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.PerformAsync(System.TimeSpan,System.Action)">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.ShowHint(ReferenceHub,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:RueI.UnityProvider.MECAsyncOperation">
+            <summary>
+            Represents an async operation using a <see cref="T:MEC.CoroutineHandle"/>.
+            </summary>
+        </member>
+        <member name="M:RueI.UnityProvider.MECAsyncOperation.#ctor(System.TimeSpan,System.Action)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RueI.UnityProvider.MECAsyncOperation"/> class, and then immediately runs.
+            </summary>
+            <param name="span">How long until the action should be ran.</param>
+            <param name="action">The action to run when finished.</param>
+        </member>
+        <member name="P:RueI.UnityProvider.MECAsyncOperation.IsRunning">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.MECAsyncOperation.Cancel">
+            <inheritdoc/>
+        </member>
+        <member name="M:RueI.UnityProvider.MECAsyncOperation.Dispose">
+            <summary>
+            Disposes this MEC operation.
+            </summary>
+        </member>
+    </members>
+</doc>

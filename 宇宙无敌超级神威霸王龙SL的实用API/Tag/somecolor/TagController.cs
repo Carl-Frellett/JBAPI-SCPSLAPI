@@ -30,8 +30,9 @@ namespace JBAPI.UnityScript
 
             if (player == null)
             {
-                Destroy(this);
+                Destroy(this);                 
                 return;
+                throw new ArgumentNullException(nameof(player));
             }
 
             StartCoroutine(InitializeColorChange());

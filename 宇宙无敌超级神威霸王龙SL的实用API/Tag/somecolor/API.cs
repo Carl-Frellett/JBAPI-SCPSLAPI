@@ -16,7 +16,12 @@ namespace JBAPI.somecolor
             "emerald","carmine","nickel",
               "mint","army_green","pumpkin"
         };
-
+        /// <summary>
+        /// 修改玩家的RankName
+        /// </summary>
+        /// <param name="玩家">指定玩家</param>
+        /// <param name="文本">Tag的内容</param>
+        /// <param name="是否启用">启用状态</param>
         public static void RTag(this Player 玩家, string 文本, bool 是否启用)
         {
             玩家.RankName = 文本;
@@ -42,7 +47,7 @@ namespace JBAPI.somecolor
             {
                 霸王龙 = 玩家.GameObject.AddComponent<TagController>();
                 霸王龙.Colors = 颜色;
-                霸王龙.Interval = 0.5f;//孩子，时间越快服务器越容易崩，如果你改了，服务器爆炸概不负责
+                霸王龙.Interval = 0.5f;//孩子，时间越快服务器越容易崩，如果你改了，服务器爆炸概不负责 受害者
             }
         }
     }
