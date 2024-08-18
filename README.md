@@ -8,10 +8,20 @@
 ``` csharp
 AudioPlayer.VerifyAudio();
 ```
+解除事件注册使用
+``` csharp
+AudioPlayer.ClearId();
+```
 来验证Audio文件夹是否存在，放入音频位置为 %AppData%/EXILED/Configs/Audio/
 音频要求: Ogg 48000Hz 单声道
+##### 怎么播放？？？？
+方法：
+``` csharp
+int botid = AudioPlayer.AddBot();
+AudioPlayer.PlayAudio(botid,"114514.ogg");
+```
 ### Anti-Cheat
-忘记了
+废掉了
 ### CustomCassie
 调用CustomCassie可以自定义SCP收容,需要一个DamageHandler
 例子：
