@@ -1,6 +1,6 @@
 ﻿using Exiled.API.Features;
 
-namespace 宇宙无敌超级神威霸王龙SL的实用API.Tag
+namespace JBAPI.Tag
 {
     public static class Onlycolor
     {

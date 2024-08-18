@@ -3,7 +3,7 @@ using UnityEngine;
 using Exiled.API.Features;
 using System;
 
-namespace 宇宙无敌超级神威霸王龙SL的实用API.UnityScript
+namespace JBAPI.UnityScript
 {
     public class TagController : MonoBehaviour
     {

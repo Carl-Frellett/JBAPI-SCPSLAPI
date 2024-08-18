@@ -4,7 +4,7 @@ using RueI.Displays;
 using RueI.Elements;
 using System.Collections.Generic;
 
-namespace 宇宙无敌超级神威霸王龙SL的实用API.hint
+namespace JBAPI.hint
 {
     public static class PosRuelHint
     {

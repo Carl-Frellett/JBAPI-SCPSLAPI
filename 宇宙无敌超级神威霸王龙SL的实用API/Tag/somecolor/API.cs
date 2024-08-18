@@ -1,8 +1,8 @@
 ﻿using Exiled.API.Features;
 using UnityEngine;
-using 宇宙无敌超级神威霸王龙SL的实用API.UnityScript;
+using JBAPI.UnityScript;
 
-namespace 宇宙无敌超级神威霸王龙SL的实用API
+namespace JBAPI.somecolor
 {
     public static class somecolor
     {
