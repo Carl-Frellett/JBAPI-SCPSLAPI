@@ -2,7 +2,7 @@
 using UnityEngine;
 using JBAPI.UnityScript;
 
-namespace JBAPI.somecolor
+namespace JBAPI.Tag
 {
     public static class somecolor
     {
