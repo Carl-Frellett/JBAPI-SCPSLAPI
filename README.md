@@ -12,14 +12,14 @@
 ```
 player.RuelHint(400, "这是一条用于测试的Hint", ture, 10);
 ```
-特点：把Hint钉死在这个位置
+特点：把Hint钉死在这个位置  
 参数：位置，文本，是否开启日志？时间
 
 · PosHint
 ```
 player.PosHint(400, "这是一条用于测试的Hint", ture, 10);
 ```
-特点：适用于如bc这样的不能重叠的Hint，每条Hint有30的间隔
+特点：适用于如bc这样的不能重叠的Hint，每条Hint有30的间隔  
 参数：位置，文本，是否开启日志？时间
 
 ### 称号
@@ -29,14 +29,14 @@ player.PosHint(400, "这是一条用于测试的Hint", ture, 10);
 ```
 player.RTag("宇宙无敌超级神威霸王龙",true);
 ```
-特点：不断变换称号的颜色，彰显您无与伦比的尊贵（TagController使用了NotIntense的[RainbowTags](https://github.com/NotIntense/RainbowTags)）
+特点：不断变换称号的颜色，彰显您无与伦比的尊贵（TagController使用了NotIntense的[RainbowTags](https://github.com/NotIntense/RainbowTags)）  
 参数：称号文本，是否启用（如果不启用则默认为红色）
 
 · 单色称号
 ```
 player.ORTag("宇宙无敌超级神威霸王龙","cyam");
 ```
-特点：只有一种颜色的称号，更为便捷的称号!
+特点：只有一种颜色的称号，更为便捷的称号!  
 参数：称号文本，称号颜色
 ***可用颜色:***
 * pink
