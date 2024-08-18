@@ -4,7 +4,7 @@
 
 ## 如何使用？
 ### RuelHint
-首先，你需要先在你服务器内安装Ruel：github.com/Ruemena/RueI/
+首先，你需要先在你服务器内安装[Ruel](https:/github.com/Ruemena/RueI)
 
 然后，JBAPI提供了两种Hint，一种为RuelHint，一种为PosHint
 · RuelHint
@@ -29,7 +29,7 @@ player.PosHint(400, "这是一条用于测试的Hint", ture, 10);
 ```
 player.RTag("宇宙无敌超级神威霸王龙",true);
 ```
-特点：不断变换称号的颜色，彰显您无与伦比的尊贵（TagController使用了NotIntense的RainbowTags）
+特点：不断变换称号的颜色，彰显您无与伦比的尊贵（TagController使用了NotIntense的[RainbowTags](https://github.com/NotIntense/RainbowTags)）
 参数：称号文本，是否启用（如果不启用则默认为红色）
 
 · 单色称号
