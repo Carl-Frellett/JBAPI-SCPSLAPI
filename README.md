@@ -20,8 +20,6 @@ AudioPlayer.ClearId();
 int botid = AudioPlayer.AddBot();
 AudioPlayer.PlayAudio(botid,"114514.ogg");
 ```
-### Anti-Cheat
-废掉了
 ### CustomCassie
 调用CustomCassie可以自定义SCP收容,需要一个DamageHandler
 例子：
