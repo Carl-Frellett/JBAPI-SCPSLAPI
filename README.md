@@ -4,7 +4,7 @@
 
 ## 如何使用？
 ### RuelHint
-首先，你需要先在你服务器内安装[Ruel](https:/github.com/Ruemena/RueI)
+首先，你需要先在你服务器内安装[Ruel](https://github.com/Ruemena/RueI)
 
 然后，JBAPI提供了两种Hint，一种为RuelHint，一种为PosHint
 · RuelHint
