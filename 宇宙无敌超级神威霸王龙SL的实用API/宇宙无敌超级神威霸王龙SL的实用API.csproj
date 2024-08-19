@@ -133,6 +133,8 @@
   <ItemGroup>
     <Compile Include="Hint\PosHint.cs" />
     <Compile Include="Hint\RuelHint.cs" />
+    <Compile Include="Log\Level.cs" />
+    <Compile Include="Log\LogAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tag\Onlycolor\API.cs" />
     <Compile Include="Tag\somecolor\API.cs" />

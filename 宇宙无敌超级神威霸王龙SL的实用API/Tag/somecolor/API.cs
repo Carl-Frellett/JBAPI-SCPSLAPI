@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Features;
 using UnityEngine;
 using JBAPI.UnityScript;
+using JBPI.Log;
 
 namespace JBAPI.Tag
 {
@@ -36,7 +37,7 @@ namespace JBAPI.Tag
 
             var 霸王龙 = 玩家.GameObject.GetComponent<TagController>();
 
-            GameCore.Console.AddLog($"JBAPI.somecolor调用 玩家 {玩家.Nickname} ({玩家.UserId})",UnityEngine.Color.gray);
+            LogAPI.日志($"JBAPI.somecolor调用 玩家 {玩家.Nickname} ({玩家.UserId})");
 
             if (霸王龙 == null)
             {

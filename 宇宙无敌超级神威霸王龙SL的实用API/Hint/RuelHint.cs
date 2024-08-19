@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using JBPI.Log;
 using MEC;
 using RueI.Displays;
 using RueI.Elements;
@@ -45,7 +46,7 @@ namespace JBAPI.hint
                 });
                 if (是否启用日志 == true)
                 {
-                    GameCore.Console.AddLog($"JBAPI.Hint调用", UnityEngine.Color.gray);
+                    LogAPI.日志($"JBAPI.Htnt调用");
                 }
             }
         }
