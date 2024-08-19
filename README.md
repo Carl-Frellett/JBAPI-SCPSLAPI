@@ -1,5 +1,5 @@
 # 宇宙无敌超级神威霸王龙SL的实用API（简称JBAPI）
-[JBAPI 图标](./Icon.png)
+![JBAPI 图标](https://github.com/Carl-Frellett/ThepracticalAPIoftheUniverseInvincibleSuperGodMightyTyrannosaurusRexSL/blob/main/Icon.png)
 
 ## 如何使用？
 ### RuelHint
