@@ -1,6 +1,5 @@
 # 宇宙无敌超级神威霸王龙SL的实用API（简称JBAPI）
 [JBAPI 图标](./Icon.png)
-不要骂我，我是新来的😭😭😭
 
 ## 如何使用？
 ### RuelHint
