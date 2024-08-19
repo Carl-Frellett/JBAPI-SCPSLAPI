@@ -1,11 +1,11 @@
 # 宇宙无敌超级神威霸王龙SL的实用API（简称JBAPI）
- ![JBAPI 图标](https://github.com/Carl-Frellett/ThepracticalAPIoftheUniverseInvincibleSuperGodMightyTyrannosaurusRexSL/blob/main/Icon.png#pic_center )<br>
-精美实用好用能用的API，我们就是其中之一，功能强大，做工精致，欢迎使用
+ ![JBAPI 图标](https://github.com/Carl-Frellett/ThepracticalAPIoftheUniverseInvincibleSuperGodMightyTyrannosaurusRexSL/blob/main/Icon.png#pic_center )<br>  
+ 
 ## 如何使用？
 ### RuelHint
 首先，你需要先在你服务器内安装[Ruel](https://github.com/Ruemena/RueI)
 
-然后，JBAPI提供了两种Hint，一种为RuelHint，一种为PosHint
+然后，JBAPI提供了两种Hint，一种为RuelHint，一种为PosHint  
 · ***RuelHint***
 下面是例子：
 ``` csharp
