@@ -133,12 +133,13 @@
   <ItemGroup>
     <Compile Include="Hint\PosHint.cs" />
     <Compile Include="Hint\RuelHint.cs" />
-    <Compile Include="Log\Level.cs" />
-    <Compile Include="Log\LogAPI.cs" />
+    <Compile Include="Log\Game\GameConsoleMessage.cs" />
+    <Compile Include="Log\Game\Level.cs" />
+    <Compile Include="Log\ServerConsoleMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tag\Onlycolor\API.cs" />
-    <Compile Include="Tag\somecolor\API.cs" />
-    <Compile Include="Tag\somecolor\TagController.cs" />
+    <Compile Include="Tag\Somecolor\API.cs" />
+    <Compile Include="Tag\Somecolor\TagController.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

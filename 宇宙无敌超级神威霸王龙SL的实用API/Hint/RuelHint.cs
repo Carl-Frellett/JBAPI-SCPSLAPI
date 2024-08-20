@@ -46,7 +46,7 @@ namespace JBAPI.hint
                 });
                 if (是否启用日志 == true)
                 {
-                    LogAPI.日志($"JBAPI.Htnt调用");
+                    ServerConsoleMessage.日志($"JBAPI.Htnt调用");
                 }
             }
         }

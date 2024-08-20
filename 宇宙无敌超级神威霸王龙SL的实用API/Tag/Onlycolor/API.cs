@@ -12,7 +12,7 @@ namespace JBAPI.Tag
             {
                 玩家.RankName = 文本;
                 玩家.RankColor = 颜色;
-                LogAPI.日志($"JBAPI.OnlyColor调用 玩家 {玩家.Nickname} ({玩家.UserId})");
+                ServerConsoleMessage.日志($"JBAPI.OnlyColor调用 玩家 {玩家.Nickname} ({玩家.UserId})");
             });
         }
     }
