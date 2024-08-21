@@ -3,7 +3,7 @@ using static JBAPI.Log.Level;
 
 namespace JBAPI.Log
 {
-    public static class GameConsoleMessage
+    public static class GameCC
     {
         public static void 控制台消息(this Player 玩家, string 消息, ConsoleLevel 级别)
         {

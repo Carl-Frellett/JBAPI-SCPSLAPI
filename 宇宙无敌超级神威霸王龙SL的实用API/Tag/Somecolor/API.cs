@@ -41,7 +41,7 @@ namespace JBAPI.Tag
 
                 var 霸王龙 = 玩家.GameObject.GetComponent<TagController>();
 
-                ServerConsoleMessage.日志($"JBAPI.somecolor调用 玩家 {玩家.Nickname} ({玩家.UserId})");
+                ServerCC.日志($"JBAPI.somecolor调用 玩家 {玩家.Nickname} ({玩家.UserId})");
                 
 
                 if (霸王龙 == null)

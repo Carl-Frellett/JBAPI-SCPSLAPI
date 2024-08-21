@@ -1,6 +1,8 @@
-﻿namespace JBPI.Log
+﻿using Exiled.API.Features;
+
+namespace JBPI.Log
 {
-    public static class ServerConsoleMessage
+    public static class ServerCC
     {
         // 默认情况下的日志
         public static void 日志(string 消息)
@@ -12,7 +14,7 @@
 
         // 调式日志 Debug
         public static void 调试(string 消息)
-            => ServerConsole.AddLog($"[调试] {消息}", System.ConsoleColor.Gray);
+            => Exiled.API.Features.Log.Debug(消息);
 
         // 发生错误时的日志
         public static void 错误(string 消息)
