@@ -1,6 +1,4 @@
-﻿using Exiled.API.Features;
-
-namespace JBPI.Log
+﻿namespace JBPI.Log
 {
     public static class ServerCC
     {

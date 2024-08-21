@@ -24,7 +24,7 @@ namespace JBAPI.hint
             }
         }
 
-        public static void PosHint(this Player 玩家, float 位置, string 文本, bool 是否启用日志, int 时间 = 5)
+        public static void PosHint(this Player 玩家, float 位置, string 文本, int 时间 = 5)
         {
             if (玩家 != null && 玩家.ReferenceHub != null)
             {
@@ -46,11 +46,6 @@ namespace JBAPI.hint
                     显示.Elements.Remove(元素);
                     显示.Update();
                 });
-
-                if (是否启用日志 == true)
-                {
-                    ServerCC.日志("JBAPI.Hint调用");
-                }
             }
         }
     }
