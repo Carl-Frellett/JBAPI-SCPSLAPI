@@ -62,6 +62,13 @@ using JBAPI.Log;
 player.控制台消息("这是一条测试消息",ConsoleLevel.错误); //他将向指定玩家的控制台输出"[错误] 这是一条测试消息"，颜色为红色
 player.控制台消息("这是一条测试消息",ConsoleLevel.自定义); //他将向指定玩家的控制台输出"这是一条测试消息"，默认自定义没有颜色（控制台的是灰色"gray"）
 ```
+### 状态
+· ***状态添加***  
+``` csharp
+using JBAPI.Effect;
+
+player.AddEffects(EffectType.Scp207, 10); //给予指定玩家Scp207的效果持续10秒
+``` 
 
 ***称号可用颜色:***
 * pink
