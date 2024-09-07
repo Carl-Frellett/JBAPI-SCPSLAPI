@@ -131,15 +131,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hint\PosHint.cs" />
-    <Compile Include="Hint\RuelHint.cs" />
-    <Compile Include="Log\Game\GameConsoleMessage.cs" />
-    <Compile Include="Log\Game\Level.cs" />
-    <Compile Include="Log\ServerConsoleMessage.cs" />
+    <Compile Include="Game\Effect\EffectAPI.cs" />
+    <Compile Include="Game\Hint\Player\PosHint.cs" />
+    <Compile Include="Game\Hint\Player\RuelHint.cs" />
+    <Compile Include="Server\Log\Game\GameConsoleMessage.cs" />
+    <Compile Include="Server\Log\Game\Level.cs" />
+    <Compile Include="Server\Log\ServerConsoleMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tag\Onlycolor\API.cs" />
-    <Compile Include="Tag\Somecolor\API.cs" />
-    <Compile Include="Tag\Somecolor\TagController.cs" />
+    <Compile Include="Game\Tag\Onlycolor\API.cs" />
+    <Compile Include="Game\Tag\Somecolor\API.cs" />
+    <Compile Include="Game\Tag\Somecolor\TagController.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
